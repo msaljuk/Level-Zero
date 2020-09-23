@@ -40,7 +40,10 @@ void ASExplosiveBarrel::Tick(float DeltaTime)
 
 void ASExplosiveBarrel::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit) 
 {
+	// explosive force for all surrounding objects near barrel
 	RadialForceComp->FireImpulse();
+	
+	// explosive force for barrel itself
 	MeshComp->AddRadialImpulse(GetActorLocation(), 750.f, 2000.f, ERadialImpulseFalloff::RIF_Constant, true);
 }
 
