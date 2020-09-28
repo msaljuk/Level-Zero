@@ -7,6 +7,8 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "SInteractionComponent.h"
 #include "Animation/AnimMontage.h"
+#include "Kismet/KismetMathLibrary.h"
+#include "DrawDebugHelpers.h"
 
 // Sets default values
 ASCharacter::ASCharacter()
@@ -16,6 +18,8 @@ ASCharacter::ASCharacter()
 
 	SpringArmComp = CreateDefaultSubobject<USpringArmComponent>("SpringArmComp");
 	SpringArmComp->bUsePawnControlRotation = true;
+	SpringArmComp->SocketOffset = FVector(0, 90, 0);
+	SpringArmComp->TargetArmLength = 250.0f;
 	SpringArmComp->SetupAttachment(RootComponent);
 
 	CameraComp = CreateDefaultSubobject<UCameraComponent>("CameraComp");
@@ -95,14 +99,7 @@ void ASCharacter::PrimaryAttack()
 
 void ASCharacter::PrimaryAttack_TimeElapsed()
 {
-	FVector HandLocation = GetMesh()->GetSocketLocation("Muzzle_01");
-
-	FTransform SpawnTM = FTransform(GetControlRotation(), HandLocation);
-
-	FActorSpawnParameters SpawnParams;
-	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-
-	GetWorld()->SpawnActor<AActor>(PrimaryProjectileClass, SpawnTM, SpawnParams);
+	GetWorld()->SpawnActor<AActor>(PrimaryProjectileClass, GetProjectileSpawnTM(), GetProjectileSpawnParams());
 }
 
 void ASCharacter::SecondaryAttack()
@@ -114,14 +111,7 @@ void ASCharacter::SecondaryAttack()
 
 void ASCharacter::SecondaryAttack_TimeElapsed()
 {
-	FVector HandLocation = GetMesh()->GetSocketLocation("Muzzle_01");
-
-	FTransform SpawnTM = FTransform(GetControlRotation(), HandLocation);
-
-	FActorSpawnParameters SpawnParams;
-	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-
-	GetWorld()->SpawnActor<AActor>(SecondaryProjectileClass, SpawnTM, SpawnParams);
+	GetWorld()->SpawnActor<AActor>(SecondaryProjectileClass, GetProjectileSpawnTM(), GetProjectileSpawnParams());
 }
 
 void ASCharacter::Dash()
@@ -133,15 +123,7 @@ void ASCharacter::Dash()
 
 void ASCharacter::Dash_TimeElapsed()
 {
-	FVector HandLocation = GetMesh()->GetSocketLocation("Muzzle_01");
-
-	FTransform SpawnTM = FTransform(GetControlRotation(), HandLocation);
-
-	FActorSpawnParameters SpawnParams;
-	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-	SpawnParams.Instigator = this;
-
-	GetWorld()->SpawnActor<AActor>(DashProjectileClass, SpawnTM, SpawnParams);
+	GetWorld()->SpawnActor<AActor>(DashProjectileClass, GetProjectileSpawnTM(), GetProjectileSpawnParams());
 }
 
 
@@ -151,4 +133,43 @@ void ASCharacter::PrimaryInteract()
 	{
 		InteractionComp->PrimaryInteract();
 	}
+}
+
+FTransform ASCharacter::GetProjectileSpawnTM()
+{
+	FVector HandLocation = GetMesh()->GetSocketLocation("Muzzle_01");
+	FVector CameraLocation = CameraComp->GetComponentRotation().Vector();
+
+	FCollisionObjectQueryParams ObjectQueryParams;
+	ObjectQueryParams.AddObjectTypesToQuery(ECC_WorldDynamic);
+	ObjectQueryParams.AddObjectTypesToQuery(ECC_WorldStatic);
+
+	FVector End = HandLocation + (CameraLocation * 1000);
+
+	FHitResult Hit;
+	GetWorld()->LineTraceSingleByObjectType(Hit, HandLocation, End, ObjectQueryParams);
+
+	FVector ImpactLocation;
+	if (Hit.GetActor())
+	{
+		ImpactLocation = Hit.Location;
+		DrawDebugLine(GetWorld(), HandLocation, ImpactLocation, FColor::Red, false, 2.0f, 0, 2.0f);
+	}
+	else
+	{
+		ImpactLocation = End;
+		DrawDebugLine(GetWorld(), HandLocation, ImpactLocation, FColor::Green, false, 2.0f, 0, 2.0f);
+	}
+
+	FRotator SpawnRotator = UKismetMathLibrary::FindLookAtRotation(HandLocation, ImpactLocation);
+
+	return FTransform(SpawnRotator, HandLocation);
+}
+
+FActorSpawnParameters ASCharacter::GetProjectileSpawnParams() {
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+	SpawnParams.Instigator = this;
+
+	return SpawnParams;
 }

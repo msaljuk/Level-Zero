@@ -66,6 +66,9 @@ protected:
 
 	void PrimaryInteract();
 
+	FTransform GetProjectileSpawnTM();
+	FActorSpawnParameters GetProjectileSpawnParams();
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
