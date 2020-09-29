@@ -8,7 +8,6 @@
 #include "SInteractionComponent.h"
 #include "Animation/AnimMontage.h"
 #include "Kismet/KismetMathLibrary.h"
-#include "DrawDebugHelpers.h"
 
 // Sets default values
 ASCharacter::ASCharacter()
@@ -138,27 +137,29 @@ void ASCharacter::PrimaryInteract()
 FTransform ASCharacter::GetProjectileSpawnTM()
 {
 	FVector HandLocation = GetMesh()->GetSocketLocation("Muzzle_01");
-	FVector CameraLocation = CameraComp->GetComponentRotation().Vector();
+	
+	FVector CameraLocation = CameraComp->GetComponentLocation();
+	FRotator CameraRotation = CameraComp->GetComponentRotation();
+
+	FVector WorldEnd = CameraLocation + (CameraRotation.Vector() * 5000);
 
 	FCollisionObjectQueryParams ObjectQueryParams;
 	ObjectQueryParams.AddObjectTypesToQuery(ECC_WorldDynamic);
 	ObjectQueryParams.AddObjectTypesToQuery(ECC_WorldStatic);
-
-	FVector End = HandLocation + (CameraLocation * 1000);
+	ObjectQueryParams.AddObjectTypesToQuery(ECC_Vehicle);
+	ObjectQueryParams.AddObjectTypesToQuery(ECC_PhysicsBody);
 
 	FHitResult Hit;
-	GetWorld()->LineTraceSingleByObjectType(Hit, HandLocation, End, ObjectQueryParams);
+	GetWorld()->LineTraceSingleByObjectType(Hit, CameraLocation, WorldEnd, ObjectQueryParams);
 
 	FVector ImpactLocation;
 	if (Hit.GetActor())
 	{
 		ImpactLocation = Hit.Location;
-		DrawDebugLine(GetWorld(), HandLocation, ImpactLocation, FColor::Red, false, 2.0f, 0, 2.0f);
 	}
 	else
 	{
-		ImpactLocation = End;
-		DrawDebugLine(GetWorld(), HandLocation, ImpactLocation, FColor::Green, false, 2.0f, 0, 2.0f);
+		ImpactLocation = WorldEnd;
 	}
 
 	FRotator SpawnRotator = UKismetMathLibrary::FindLookAtRotation(HandLocation, ImpactLocation);

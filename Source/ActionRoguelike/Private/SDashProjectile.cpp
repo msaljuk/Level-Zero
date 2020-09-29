@@ -25,15 +25,17 @@ ASDashProjectile::ASDashProjectile()
 	SphereComp = CreateDefaultSubobject<USphereComponent>("SphereComp");
 	SphereComp->SetCollisionObjectType(ECC_WorldDynamic);
 	SphereComp->SetCollisionProfileName("Projectile");
+	SphereComp->SetEnableGravity(false);
 	RootComponent = SphereComp;
 
 	EffectComp = CreateDefaultSubobject<UParticleSystemComponent>("EffectComp");
 	EffectComp->SetupAttachment(SphereComp);
 
 	MovementComp = CreateDefaultSubobject<UProjectileMovementComponent>("MovementComp");
-	MovementComp->InitialSpeed = 1000.0f;
+	MovementComp->InitialSpeed = 2500.0f;
 	MovementComp->bRotationFollowsVelocity = true;
 	MovementComp->bInitialVelocityInLocalSpace = true;
+	MovementComp->ProjectileGravityScale = 0.0f;
 }
 
 void ASDashProjectile::PostInitializeComponents()
