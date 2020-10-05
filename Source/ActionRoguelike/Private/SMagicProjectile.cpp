@@ -5,6 +5,10 @@
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Particles/ParticleSystemComponent.h"
 #include "SAtttributeComponent.h"
+#include "Kismet/GameplayStatics.h"
+#include "Sound/SoundCue.h"
+#include "DrawDebugHelpers.h"
+#include "Components/AudioComponent.h"
 
 // Sets default values
 ASMagicProjectile::ASMagicProjectile()
@@ -16,6 +20,7 @@ ASMagicProjectile::ASMagicProjectile()
 	SphereComp->SetCollisionObjectType(ECC_WorldDynamic);
 	SphereComp->SetCollisionProfileName("Projectile");
 	SphereComp->OnComponentBeginOverlap.AddDynamic(this, &ASMagicProjectile::OnActorOverlap);
+	SphereComp->OnComponentHit.AddDynamic(this, &ASMagicProjectile::OnActorHit);
 	RootComponent = SphereComp;
 
 	EffectComp = CreateDefaultSubobject<UParticleSystemComponent>("EffectComp");
@@ -26,12 +31,17 @@ ASMagicProjectile::ASMagicProjectile()
 	MovementComp->bRotationFollowsVelocity = true;
 	MovementComp->bInitialVelocityInLocalSpace = true;
 
+	ExplosionDelay = 7.0f;
+
+	AudioComp = CreateDefaultSubobject<UAudioComponent>("AudioComp");
 }
 
 // Called when the game starts or when spawned
 void ASMagicProjectile::BeginPlay()
 {
 	Super::BeginPlay();
+
+	GetWorldTimerManager().SetTimer(TimerHandle_ProjectileExplosionDelay, this, &ASMagicProjectile::Explode, ExplosionDelay);
 	
 }
 
@@ -53,7 +63,26 @@ void ASMagicProjectile::OnActorOverlap(UPrimitiveComponent* OverlappedComponent,
 		{
 			AttributeComp->ApplyHealthChange(-20.0f);
 
-			Destroy();
+			Explode();
 		}
 	}
+}
+
+void ASMagicProjectile::OnActorHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
+{
+	if (OtherActor)
+	{
+		Explode();
+	}
+}
+
+void ASMagicProjectile::Explode()
+{
+	AudioComp->Stop();
+
+	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ImpactVFX, GetActorLocation());
+
+	UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation());
+
+	Destroy();
 }

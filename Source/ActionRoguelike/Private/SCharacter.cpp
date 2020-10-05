@@ -146,7 +146,17 @@ void ASCharacter::PrimaryInteract()
 
 void ASCharacter::OnHealthChanged(AActor* InstigatorActor, USAtttributeComponent* OwningComp, float NewHealth, float Delta)
 {
-	if (NewHealth <= 0.0f && Delta < 0)
+	
+	if (Delta < 0.0f && NewHealth > 0.0f)
+	{
+		USkeletalMeshComponent* MeshComp = GetMesh();
+
+		if (MeshComp)
+		{
+			MeshComp->SetScalarParameterValueOnMaterials("TimeToHit", GetWorld()->TimeSeconds);
+		}
+	}
+	else if (Delta < 0.0f && NewHealth <= 0.0f)
 	{
 		APlayerController* PlayerController = Cast<APlayerController>(GetController());
 
