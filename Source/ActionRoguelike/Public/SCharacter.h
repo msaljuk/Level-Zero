@@ -71,8 +71,13 @@ protected:
 
 	void PrimaryInteract();
 
+	UFUNCTION()
+	void OnHealthChanged(AActor* InstigatorActor, USAtttributeComponent* OwningComp, float NewHealth, float Delta);
+
 	FTransform GetProjectileSpawnTM();
 	FActorSpawnParameters GetProjectileSpawnParams();
+
+	virtual void PostInitializeComponents();
 
 public:	
 	// Called every frame

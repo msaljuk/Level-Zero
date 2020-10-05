@@ -35,6 +35,13 @@ ASCharacter::ASCharacter()
 
 }
 
+void ASCharacter::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+
+	AttributeComp->OnHealthChanged.AddDynamic(this, &ASCharacter::OnHealthChanged);
+}
+
 // Called when the game starts or when spawned
 void ASCharacter::BeginPlay()
 {
@@ -137,6 +144,16 @@ void ASCharacter::PrimaryInteract()
 	}
 }
 
+void ASCharacter::OnHealthChanged(AActor* InstigatorActor, USAtttributeComponent* OwningComp, float NewHealth, float Delta)
+{
+	if (NewHealth <= 0.0f && Delta < 0)
+	{
+		APlayerController* PlayerController = Cast<APlayerController>(GetController());
+
+		DisableInput(PlayerController);
+	}
+}
+
 FTransform ASCharacter::GetProjectileSpawnTM()
 {
 	FVector HandLocation = GetMesh()->GetSocketLocation("Muzzle_01");
@@ -177,3 +194,5 @@ FActorSpawnParameters ASCharacter::GetProjectileSpawnParams() {
 
 	return SpawnParams;
 }
+
+
