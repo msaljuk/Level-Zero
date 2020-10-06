@@ -146,21 +146,26 @@ void ASCharacter::PrimaryInteract()
 
 void ASCharacter::OnHealthChanged(AActor* InstigatorActor, USAtttributeComponent* OwningComp, float NewHealth, float Delta)
 {
-	
-	if (Delta < 0.0f && NewHealth > 0.0f)
-	{
-		USkeletalMeshComponent* MeshComp = GetMesh();
+	USkeletalMeshComponent* MeshComp = GetMesh();
 
-		if (MeshComp)
+	// Damaged
+	if (Delta < 0.0f)
+	{
+		// Alive
+		if (NewHealth > 0.0f)
 		{
-			MeshComp->SetScalarParameterValueOnMaterials("TimeToHit", GetWorld()->TimeSeconds);
+			if (MeshComp)
+			{
+				MeshComp->SetScalarParameterValueOnMaterials("TimeToHit", GetWorld()->TimeSeconds);
+			}
 		}
-	}
-	else if (Delta < 0.0f && NewHealth <= 0.0f)
-	{
-		APlayerController* PlayerController = Cast<APlayerController>(GetController());
+		// Dead
+		else
+		{
+			APlayerController* PlayerController = Cast<APlayerController>(GetController());
 
-		DisableInput(PlayerController);
+			DisableInput(PlayerController);
+		}
 	}
 }
 
@@ -204,5 +209,3 @@ FActorSpawnParameters ASCharacter::GetProjectileSpawnParams() {
 
 	return SpawnParams;
 }
-
-
