@@ -7,6 +7,7 @@
 #include "SAICharacter.generated.h"
 
 class UPawnSensingComponent;
+class USAtttributeComponent;
 
 UCLASS()
 class ACTIONROGUELIKE_API ASAICharacter : public ACharacter
@@ -18,6 +19,9 @@ public:
 	ASAICharacter();
 
 protected:
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	USAtttributeComponent* AttributeComp;
 
 	virtual void PostInitializeComponents() override;
 

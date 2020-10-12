@@ -6,11 +6,16 @@
 #include "AIController.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "DrawDebugHelpers.h"
+#include "SAtttributeComponent.h"
 
 // Sets default values
 ASAICharacter::ASAICharacter()
 {
     PawnSensingComp = CreateDefaultSubobject<UPawnSensingComponent>("PawnSensingComp");
+
+    AttributeComp = CreateDefaultSubobject<USAtttributeComponent>("AttributeComp");
+
+    AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 }
 
 void ASAICharacter::PostInitializeComponents()
@@ -30,7 +35,7 @@ void ASAICharacter::OnPawnSeen(APawn* Pawn)
 
         BlackboardComp->SetValueAsObject("TargetActor", Pawn);
 
-        DrawDebugString(GetWorld(), GetActorLocation(), TEXT("PLAYER SPOTTED"), nullptr, FColor::White, 4.0f, true);
+//      DrawDebugString(GetWorld(), GetActorLocation(), TEXT("PLAYER SPOTTED"), nullptr, FColor::White, 4.0f, true);
     }
 }
 
