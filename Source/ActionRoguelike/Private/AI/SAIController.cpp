@@ -4,6 +4,8 @@
 #include "AI/SAIController.h"
 #include "Kismet/GameplayStatics.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "AI/SAICharacter.h"
+#include "SAtttributeComponent.h"
 
 void ASAIController::BeginPlay()
 {
@@ -14,5 +16,25 @@ void ASAIController::BeginPlay()
 		RunBehaviorTree(BehaviorTree);
 	}
 
-	APawn* MyPawn = UGameplayStatics::GetPlayerPawn(this, 0);
+	InitializeBlackboardHealth();
+}
+
+void ASAIController::InitializeBlackboardHealth()
+{
+	ASAICharacter* AIPlayer = Cast<ASAICharacter>(GetPawn());
+
+	if (ensure(AIPlayer))
+	{
+		USAtttributeComponent* AttributeComp = Cast<USAtttributeComponent>(AIPlayer->GetComponentByClass(USAtttributeComponent::StaticClass()));
+
+		if (ensure(AttributeComp))
+		{
+			UBlackboardComponent* BlackboardComp = GetBlackboardComponent();
+
+			if (ensure(BlackboardComp))
+			{
+				BlackboardComp->SetValueAsFloat("Health", AttributeComp->HealthMax);
+			}
+		}
+	}
 }

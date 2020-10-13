@@ -1,4 +1,5 @@
 // Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "SAtttributeComponent.h"
@@ -15,6 +16,11 @@ USAtttributeComponent::USAtttributeComponent()
 bool USAtttributeComponent::IsAlive() const
 {
 	return Health > 0.0f;
+}
+
+float USAtttributeComponent::GetHealth() const
+{
+	return Health;
 }
 
 bool USAtttributeComponent::ApplyHealthChange(float Delta)

@@ -38,4 +38,3 @@ void ASAICharacter::OnPawnSeen(APawn* Pawn)
 //      DrawDebugString(GetWorld(), GetActorLocation(), TEXT("PLAYER SPOTTED"), nullptr, FColor::White, 4.0f, true);
     }
 }
-
