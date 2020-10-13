@@ -104,5 +104,5 @@ void ASDashProjectile::Teleport_TimeElapsed()
 		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), PortalClose, TeleportLocation);
 	}
 
-	ASDashProjectile::Destroy();
+	Destroy();
 }
