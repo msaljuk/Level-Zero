@@ -15,26 +15,4 @@ void ASAIController::BeginPlay()
 	{
 		RunBehaviorTree(BehaviorTree);
 	}
-
-	InitializeBlackboardHealth();
-}
-
-void ASAIController::InitializeBlackboardHealth()
-{
-	ASAICharacter* AIPlayer = Cast<ASAICharacter>(GetPawn());
-
-	if (ensure(AIPlayer))
-	{
-		USAtttributeComponent* AttributeComp = Cast<USAtttributeComponent>(AIPlayer->GetComponentByClass(USAtttributeComponent::StaticClass()));
-
-		if (ensure(AttributeComp))
-		{
-			UBlackboardComponent* BlackboardComp = GetBlackboardComponent();
-
-			if (ensure(BlackboardComp))
-			{
-				BlackboardComp->SetValueAsFloat("Health", AttributeComp->HealthMax);
-			}
-		}
-	}
 }

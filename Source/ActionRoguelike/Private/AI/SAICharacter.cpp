@@ -7,6 +7,7 @@
 #include "BehaviorTree/BlackboardComponent.h"
 #include "DrawDebugHelpers.h"
 #include "SAtttributeComponent.h"
+#include "BrainComponent.h"
 
 // Sets default values
 ASAICharacter::ASAICharacter()
@@ -16,25 +17,65 @@ ASAICharacter::ASAICharacter()
     AttributeComp = CreateDefaultSubobject<USAtttributeComponent>("AttributeComp");
 
     AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
+
+    TimeToHitParamName = "TimeToHit";
 }
 
 void ASAICharacter::PostInitializeComponents()
 {
     Super::PostInitializeComponents();
 
+	AttributeComp->OnHealthChanged.AddDynamic(this, &ASAICharacter::OnHealthChanged);
+
     PawnSensingComp->OnSeePawn.AddDynamic(this, &ASAICharacter::OnPawnSeen);
+}
+
+void ASAICharacter::OnHealthChanged(AActor* InstigatorActor, USAtttributeComponent* OwningComp, float NewHealth, float Delta)
+{
+    // Damaged
+    if (Delta < 0.0f)
+    {
+        if (InstigatorActor != this)
+        {
+            SetTargetActor(InstigatorActor);
+        }
+
+        GetMesh()->SetScalarParameterValueOnMaterials(TimeToHitParamName, GetWorld()->TimeSeconds);
+
+        // Bot has just died
+        if (NewHealth <= 0.0f)
+        {
+            // stop BT
+            AAIController* AIC = Cast<AAIController>(GetController());
+
+            if (AIC)
+            {
+                AIC->GetBrainComponent()->StopLogic("Killed");
+            }
+
+            // rag doll
+            GetMesh()->SetAllBodiesSimulatePhysics(true);
+            GetMesh()->SetCollisionProfileName("Ragdoll");
+
+            // set Lifespan
+            SetLifeSpan(10.0f);
+        }
+    }
 }
 
 void ASAICharacter::OnPawnSeen(APawn* Pawn)
 {
-    AAIController* AIController = Cast<AAIController>(GetController());
+    SetTargetActor(Pawn);
+}
+
+void ASAICharacter::SetTargetActor(AActor* NewActor)
+{
+	AAIController* AIController = Cast<AAIController>(GetController());
 
     if (AIController)
     {
         UBlackboardComponent* BlackboardComp = AIController->GetBlackboardComponent();
 
-        BlackboardComp->SetValueAsObject("TargetActor", Pawn);
-
-//      DrawDebugString(GetWorld(), GetActorLocation(), TEXT("PLAYER SPOTTED"), nullptr, FColor::White, 4.0f, true);
+        BlackboardComp->SetValueAsObject("TargetActor", NewActor);
     }
 }

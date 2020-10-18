@@ -27,7 +27,7 @@ EBTNodeResult::Type USBTTask_Heal::ExecuteTask(UBehaviorTreeComponent& OwnerComp
 		{
 			const float HealDelta = 20.0f;
 
-			AttributeComp->ApplyHealthChange(HealDelta);
+			AttributeComp->ApplyHealthChange(AIPawn, HealDelta);
 
 			return EBTNodeResult::Succeeded;
 		}

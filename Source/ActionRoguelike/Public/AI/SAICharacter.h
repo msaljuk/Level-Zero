@@ -20,6 +20,9 @@ public:
 
 protected:
 
+	UPROPERTY(VisibleAnywhere, Category = "Effect")
+	FName TimeToHitParamName;
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	USAtttributeComponent* AttributeComp;
 
@@ -29,5 +32,10 @@ protected:
 	UPawnSensingComponent* PawnSensingComp;
 
 	UFUNCTION()
+	void OnHealthChanged(AActor* InstigatorActor, USAtttributeComponent* OwningComp, float NewHealth, float Delta);
+
+	UFUNCTION()
 	void OnPawnSeen(APawn* Pawn);
+
+	void SetTargetActor(AActor* NewActor);
 };

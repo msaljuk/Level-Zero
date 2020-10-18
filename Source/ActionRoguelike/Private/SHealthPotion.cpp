@@ -4,7 +4,8 @@
 #include "SHealthPotion.h"
 #include "SAtttributeComponent.h"
 
-ASHealthPotion::ASHealthPotion() {
+ASHealthPotion::ASHealthPotion() 
+{
 	PotionHealingValue = 30.0f;
 }
 
@@ -30,7 +31,7 @@ void ASHealthPotion::Heal(APawn* InstigatorPawn)
 
 			if (CurrentHealth < AttributeComp->HealthMax)
 			{
-				AttributeComp->ApplyHealthChange(PotionHealingValue);
+				AttributeComp->ApplyHealthChange(this, PotionHealingValue);
 			}
 			// if Health already at Max, ignore interaction and enable Potion again
 			else
