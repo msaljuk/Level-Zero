@@ -80,6 +80,8 @@ protected:
 
 	virtual void PostInitializeComponents();
 
+	virtual FVector GetPawnViewLocation() const override;
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -87,4 +89,6 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	UFUNCTION(Exec)
+	void HealSelf(float Amount = 100);
 };

@@ -9,6 +9,7 @@
 #include "Sound/SoundCue.h"
 #include "DrawDebugHelpers.h"
 #include "Components/AudioComponent.h"
+#include "SGameplayFunctionLibrary.h"
 
 // Sets default values
 ASMagicProjectile::ASMagicProjectile()
@@ -27,12 +28,12 @@ ASMagicProjectile::ASMagicProjectile()
 	EffectComp->SetupAttachment(SphereComp);
 
 	MovementComp = CreateDefaultSubobject<UProjectileMovementComponent>("MovementComp");
-	MovementComp->InitialSpeed = 1000.0f;
+	MovementComp->InitialSpeed = 2000.0f;
 	MovementComp->bRotationFollowsVelocity = true;
 	MovementComp->bInitialVelocityInLocalSpace = true;
 
 	ExplosionDelay = 7.0f;
-	ProjectileDamage = -20.0f;
+	ProjectileDamage = 20.0f;
 
 	AudioComp = CreateDefaultSubobject<UAudioComponent>("AudioComp");
 	AudioComp->SetupAttachment(RootComponent);
@@ -61,10 +62,9 @@ void ASMagicProjectile::OnActorOverlap(UPrimitiveComponent* OverlappedComponent,
 	{
 		USAtttributeComponent* AttributeComp = Cast<USAtttributeComponent>(OtherActor->GetComponentByClass(USAtttributeComponent::StaticClass()));
 
-		if (AttributeComp)
+		// Apply Damage & Impulse
+		if (USGameplayFunctionLibrary::ApplyDirectionalDamage(GetInstigator(), OtherActor, ProjectileDamage, SweepResult))
 		{
-			AttributeComp->ApplyHealthChange(GetInstigator(), ProjectileDamage);
-
 			Explode();
 		}
 	}

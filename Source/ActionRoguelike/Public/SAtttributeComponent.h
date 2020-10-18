@@ -28,6 +28,9 @@ protected:
 
 public:	
 
+	UFUNCTION(BlueprintCallable)
+	bool Kill(AActor* InstigatingActor);
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Attributes")
 	float HealthMax;
 

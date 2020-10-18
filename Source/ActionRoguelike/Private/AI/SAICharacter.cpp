@@ -8,6 +8,9 @@
 #include "DrawDebugHelpers.h"
 #include "SAtttributeComponent.h"
 #include "BrainComponent.h"
+#include "SWorldUserWidget.h"
+#include "Components/CapsuleComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 // Sets default values
 ASAICharacter::ASAICharacter()
@@ -15,6 +18,9 @@ ASAICharacter::ASAICharacter()
     PawnSensingComp = CreateDefaultSubobject<UPawnSensingComponent>("PawnSensingComp");
 
     AttributeComp = CreateDefaultSubobject<USAtttributeComponent>("AttributeComp");
+
+	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Ignore);
+	GetMesh()->SetGenerateOverlapEvents(true);
 
     AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 
@@ -40,6 +46,16 @@ void ASAICharacter::OnHealthChanged(AActor* InstigatorActor, USAtttributeCompone
             SetTargetActor(InstigatorActor);
         }
 
+        if (ActiveHealthBar == nullptr)
+        {
+			ActiveHealthBar = CreateWidget<USWorldUserWidget>(GetWorld(), HealthBarWidgetClass);
+            if (ActiveHealthBar)
+            {
+                ActiveHealthBar->AttachedActor = this;
+                ActiveHealthBar->AddToViewport();
+            }
+        }
+
         GetMesh()->SetScalarParameterValueOnMaterials(TimeToHitParamName, GetWorld()->TimeSeconds);
 
         // Bot has just died
@@ -56,6 +72,9 @@ void ASAICharacter::OnHealthChanged(AActor* InstigatorActor, USAtttributeCompone
             // rag doll
             GetMesh()->SetAllBodiesSimulatePhysics(true);
             GetMesh()->SetCollisionProfileName("Ragdoll");
+
+            GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+            GetCharacterMovement()->DisableMovement();
 
             // set Lifespan
             SetLifeSpan(10.0f);

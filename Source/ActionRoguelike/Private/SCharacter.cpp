@@ -42,6 +42,11 @@ void ASCharacter::PostInitializeComponents()
 	AttributeComp->OnHealthChanged.AddDynamic(this, &ASCharacter::OnHealthChanged);
 }
 
+FVector ASCharacter::GetPawnViewLocation() const
+{
+	return CameraComp->GetComponentLocation();
+}
+
 // Called when the game starts or when spawned
 void ASCharacter::BeginPlay()
 {
@@ -70,6 +75,11 @@ void ASCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	PlayerInputComponent->BindAction("PrimaryInteract", IE_Pressed, this, &ASCharacter::PrimaryInteract);
 }
 
+
+void ASCharacter::HealSelf(float Amount /*= 100*/)
+{
+	AttributeComp->ApplyHealthChange(this, Amount);
+}
 
 // Called every frame
 void ASCharacter::Tick(float DeltaTime)
@@ -165,6 +175,9 @@ void ASCharacter::OnHealthChanged(AActor* InstigatorActor, USAtttributeComponent
 			APlayerController* PlayerController = Cast<APlayerController>(GetController());
 
 			DisableInput(PlayerController);
+
+			// set Lifespan
+			SetLifeSpan(10.0f);
 		}
 	}
 }
