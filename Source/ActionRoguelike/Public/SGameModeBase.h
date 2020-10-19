@@ -10,6 +10,7 @@
 class UEnvQuery;
 class UEnvQueryInstanceBlueprintWrapper;
 class UCurveFloat;
+class ASCharacter;
 
 /**
  * 
@@ -29,6 +30,10 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "AI")
 	float SpawnTimerInterval;
 
+
+	UPROPERTY(EditDefaultsOnly, Category = "Gameplay")
+	int KillCredits;
+
 	UFUNCTION()
 	void SpawnBotTimerElapsed();
 
@@ -44,9 +49,12 @@ protected:
 	UFUNCTION()
 	void OnQueryCompleted(UEnvQueryInstanceBlueprintWrapper* QueryInstance, EEnvQueryStatus::Type QueryStatus);
 
+	void RespawnPlayer(ASCharacter* Player);
+
 	UFUNCTION()
 	void RespawnPlayerElapsed(AController* Controller);
 
+	void GivePlayerKillCredits(ASCharacter* Player);
 
 public:
 

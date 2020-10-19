@@ -15,6 +15,8 @@ static TAutoConsoleVariable<bool> CVarSpawnBots(TEXT("su.SpawnBots"), true, TEXT
 ASGameModeBase::ASGameModeBase()
 {
 	SpawnTimerInterval = 2.0f;
+
+	KillCredits = 2;
 }
 
 void ASGameModeBase::StartPlay()
@@ -104,6 +106,17 @@ void ASGameModeBase::OnQueryCompleted(UEnvQueryInstanceBlueprintWrapper* QueryIn
 	}
 }
 
+void ASGameModeBase::RespawnPlayer(ASCharacter* Player)
+{
+	FTimerHandle TimerHandle_RespawnDelay;
+
+	FTimerDelegate Delegate;
+	Delegate.BindUFunction(this, "RespawnPlayerElapsed", Player->GetController());
+
+	float RespawnDelay = 2.0f;
+	GetWorldTimerManager().SetTimer(TimerHandle_RespawnDelay, Delegate, RespawnDelay, false);
+}
+
 void ASGameModeBase::RespawnPlayerElapsed(AController* Controller)
 {
 	if (ensure(Controller))
@@ -115,29 +128,33 @@ void ASGameModeBase::RespawnPlayerElapsed(AController* Controller)
 }
 
 
+void ASGameModeBase::GivePlayerKillCredits(ASCharacter* Player)
+{
+	ASPlayerState* PlayerState = Player->GetPlayerState<ASPlayerState>();
+
+	PlayerState->AddCredits(KillCredits);
+
+	UE_LOG(LogTemp, Log, TEXT("PlayerCredits: %d"), PlayerState->PlayerCredits);
+}
+
 void ASGameModeBase::OnActorKilled(AActor* VictimActor, AActor* Killer)
 {
 	ASCharacter* PlayerVictim = Cast<ASCharacter>(VictimActor);
+
+	// if player was killed, respawn player
 	if (PlayerVictim)
 	{
-		FTimerHandle TimerHandle_RespawnDelay;
+		RespawnPlayer(PlayerVictim);
+	} 
 
-		FTimerDelegate Delegate;
-		Delegate.BindUFunction(this, "RespawnPlayerElapsed", PlayerVictim->GetController());
-
-		float RespawnDelay = 2.0f;
-		GetWorldTimerManager().SetTimer(TimerHandle_RespawnDelay, Delegate, RespawnDelay, false);
-	} else
+	// if player killed bot, give player kill credits
+	else 
 	{
 		ASCharacter* PlayerKiller = Cast<ASCharacter>(Killer);
 
 		if (PlayerKiller)
 		{
-			ASPlayerState* PlayerState = PlayerKiller->GetPlayerState<ASPlayerState>();
-
-			PlayerState->PlayerCredits += 1;
-
-			UE_LOG(LogTemp, Log, TEXT("PlayerCredits: %d"), PlayerState->PlayerCredits);
+			GivePlayerKillCredits(PlayerKiller);
 		}
 	}
 

@@ -4,29 +4,28 @@
 
 #include "CoreMinimal.h"
 #include "SPowerUp.h"
-#include "SGameplayInterface.h"
-#include "SHealthPotion.generated.h"
+#include "SCoin.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class ACTIONROGUELIKE_API ASHealthPotion : public ASPowerUp, public ISGameplayInterface
+class ACTIONROGUELIKE_API ASCoin : public ASPowerUp, public ISGameplayInterface
 {
 	GENERATED_BODY()
 
 public:
 
-	ASHealthPotion();
+	ASCoin();
 
 	void Interact_Implementation(APawn* InstigatorPawn);
 
 protected:
 
-	float PotionHealingValue;
-
 	UPROPERTY(EditDefaultsOnly)
-	int PotionCreditsCost;
+	int CoinCredits;
 
-	void Heal(APawn* InstigatorPawn);
+	void GivePlayerCoinCredits(APawn* InstigatorPawn);
+	
 };
+
