@@ -18,24 +18,6 @@ class ACTIONROGUELIKE_API ASCharacter : public ACharacter
 {
 	GENERATED_BODY()
 
-protected:
-
-	UPROPERTY(EditAnywhere, Category = "Projectile")
-	TSubclassOf<AActor> PrimaryProjectileClass;
-
-	UPROPERTY(EditAnywhere, Category = "Projectile")
-	TSubclassOf<AActor> SecondaryProjectileClass;
-
-	UPROPERTY(EditAnywhere, Category = "Projectile")
-	TSubclassOf<AActor> DashProjectileClass;
-
-	UPROPERTY(EditAnywhere, Category = "Projectile")
-	UAnimMontage* AttackAnim;
-
-	FTimerHandle TimerHandle_PrimaryAttack;
-	FTimerHandle TimerHandle_SecondaryAttack;
-	FTimerHandle TimerHandle_Dash;
-
 public:
 	// Sets default values for this character's properties
 	ASCharacter();
@@ -65,13 +47,10 @@ protected:
 	void MoveRight(float Value);
 
 	void PrimaryAttack();
-	void PrimaryAttack_TimeElapsed();
 
 	void SecondaryAttack();
-	void SecondaryAttack_TimeElapsed();
 
 	void Dash();
-	void Dash_TimeElapsed();
 
 	void StartSprint();
 	void StopSprint();
@@ -80,9 +59,6 @@ protected:
 
 	UFUNCTION()
 	void OnHealthChanged(AActor* InstigatorActor, USAtttributeComponent* OwningComp, float NewHealth, float Delta);
-
-	FTransform GetProjectileSpawnTM();
-	FActorSpawnParameters GetProjectileSpawnParams();
 
 	virtual void PostInitializeComponents();
 

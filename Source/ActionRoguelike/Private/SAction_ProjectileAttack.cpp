@@ -20,6 +20,7 @@ void USAction_ProjectileAttack::StartAction_Implementation(AActor* Instigator)
 	Super::StartAction_Implementation(Instigator);
 
 	ACharacter* Character = Cast<ACharacter>(Instigator);
+
 	if (Character)
 	{
 		Character->PlayAnimMontage(AttackAnim);
@@ -31,6 +32,10 @@ void USAction_ProjectileAttack::StartAction_Implementation(AActor* Instigator)
 		Delegate.BindUFunction(this, "AttackDelay_Elapsed", Character);
 
 		GetWorld()->GetTimerManager().SetTimer(TimerHandle_AttackDelay, Delegate, AttackAnimDelay, false);
+	}
+	else
+	{
+		StopAction(Instigator);
 	}
 }
 

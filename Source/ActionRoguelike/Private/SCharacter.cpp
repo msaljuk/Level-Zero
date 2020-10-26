@@ -125,35 +125,16 @@ void ASCharacter::PrimaryAttack()
 	ActionComp->StartActionByName(this, "PrimaryAttack");
 }
 
-void ASCharacter::PrimaryAttack_TimeElapsed()
-{
-	GetWorld()->SpawnActor<AActor>(PrimaryProjectileClass, GetProjectileSpawnTM(), GetProjectileSpawnParams());
-}
-
 void ASCharacter::SecondaryAttack()
 {
-	PlayAnimMontage(AttackAnim);
-
-	GetWorldTimerManager().SetTimer(TimerHandle_SecondaryAttack, this, &ASCharacter::SecondaryAttack_TimeElapsed, 0.2f);
+	ActionComp->StartActionByName(this, "SecondaryAttack");
 }
 
-void ASCharacter::SecondaryAttack_TimeElapsed()
-{
-	GetWorld()->SpawnActor<AActor>(SecondaryProjectileClass, GetProjectileSpawnTM(), GetProjectileSpawnParams());
-}
 
 void ASCharacter::Dash()
 {
-	PlayAnimMontage(AttackAnim);
-
-	GetWorldTimerManager().SetTimer(TimerHandle_Dash, this, &ASCharacter::Dash_TimeElapsed, 0.2f);
+	ActionComp->StartActionByName(this, "Dash");
 }
-
-void ASCharacter::Dash_TimeElapsed()
-{
-	GetWorld()->SpawnActor<AActor>(DashProjectileClass, GetProjectileSpawnTM(), GetProjectileSpawnParams());
-}
-
 
 void ASCharacter::StartSprint()
 {
@@ -199,45 +180,4 @@ void ASCharacter::OnHealthChanged(AActor* InstigatorActor, USAtttributeComponent
 			SetLifeSpan(10.0f);
 		}
 	}
-}
-
-FTransform ASCharacter::GetProjectileSpawnTM()
-{
-	FVector HandLocation = GetMesh()->GetSocketLocation("Muzzle_01");
-	
-	FVector CameraLocation = CameraComp->GetComponentLocation();
-	FRotator CameraRotation = CameraComp->GetComponentRotation();
-
-	FVector WorldEnd = CameraLocation + (CameraRotation.Vector() * 5000);
-
-	FCollisionObjectQueryParams ObjectQueryParams;
-	ObjectQueryParams.AddObjectTypesToQuery(ECC_WorldDynamic);
-	ObjectQueryParams.AddObjectTypesToQuery(ECC_WorldStatic);
-	ObjectQueryParams.AddObjectTypesToQuery(ECC_Vehicle);
-	ObjectQueryParams.AddObjectTypesToQuery(ECC_PhysicsBody);
-
-	FHitResult Hit;
-	GetWorld()->LineTraceSingleByObjectType(Hit, CameraLocation, WorldEnd, ObjectQueryParams);
-
-	FVector ImpactLocation;
-	if (Hit.GetActor())
-	{
-		ImpactLocation = Hit.Location;
-	}
-	else
-	{
-		ImpactLocation = WorldEnd;
-	}
-
-	FRotator SpawnRotator = UKismetMathLibrary::FindLookAtRotation(HandLocation, ImpactLocation);
-
-	return FTransform(SpawnRotator, HandLocation);
-}
-
-FActorSpawnParameters ASCharacter::GetProjectileSpawnParams() {
-	FActorSpawnParameters SpawnParams;
-	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-	SpawnParams.Instigator = this;
-
-	return SpawnParams;
 }

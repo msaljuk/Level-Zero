@@ -17,6 +17,10 @@ void USActionComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
+	for (TSubclassOf<USAction> ActionClass : DefaultActions)
+	{
+		AddAction(GetOwner(), ActionClass);
+	}
 }
 
 
@@ -57,8 +61,6 @@ bool USActionComponent::StartActionByName(AActor* Instigator, FName ActionName)
 	{
 		if (Action && Action->ActionName == ActionName)
 		{
-			UE_LOG(LogTemp, Log, TEXT("Action Found"));
-
 			Action->StartAction(Instigator);
 			return true;
 		}

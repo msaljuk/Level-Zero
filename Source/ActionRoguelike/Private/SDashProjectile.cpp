@@ -32,7 +32,7 @@ ASDashProjectile::ASDashProjectile()
 	EffectComp->SetupAttachment(SphereComp);
 
 	MovementComp = CreateDefaultSubobject<UProjectileMovementComponent>("MovementComp");
-	MovementComp->InitialSpeed = 2500.0f;
+	MovementComp->InitialSpeed = 5000.0f;
 	MovementComp->bRotationFollowsVelocity = true;
 	MovementComp->bInitialVelocityInLocalSpace = true;
 	MovementComp->ProjectileGravityScale = 0.0f;
@@ -51,7 +51,7 @@ void ASDashProjectile::BeginPlay()
 {
 	Super::BeginPlay();
 
-	GetWorldTimerManager().SetTimer(TimerHandle_ProjectileExplosionDelay, this, &ASDashProjectile::ExplodeProjectileAndTeleport, 0.2f);
+	GetWorldTimerManager().SetTimer(TimerHandle_ProjectileExplosionDelay, this, &ASDashProjectile::ExplodeProjectileAndTeleport, 0.4f);
 }
 
 // Called every frame
