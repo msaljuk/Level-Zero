@@ -45,6 +45,11 @@ void USActionComponent::AddAction(AActor* Instigator, TSubclassOf<USAction> Acti
 	if (ensure(NewAction))
 	{
 		Actions.Add(NewAction);
+
+		if (NewAction->bAutoStart && ensure(NewAction->CanStart(Instigator)))
+		{
+			NewAction->StartAction(Instigator);
+		}
 	}
 }
 

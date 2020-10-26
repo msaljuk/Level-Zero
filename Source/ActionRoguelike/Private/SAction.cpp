@@ -4,6 +4,7 @@
 #include "SAction.h"
 #include "SActionComponent.h"
 
+
 void USAction::StartAction_Implementation(AActor* Instigator)
 {
 	UE_LOG(LogTemp, Log, TEXT("Running: %s"), *GetNameSafe(this));
