@@ -11,6 +11,7 @@
 #include "SWorldUserWidget.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "SActionComponent.h"
 
 // Sets default values
 ASAICharacter::ASAICharacter()
@@ -18,6 +19,8 @@ ASAICharacter::ASAICharacter()
     PawnSensingComp = CreateDefaultSubobject<UPawnSensingComponent>("PawnSensingComp");
 
     AttributeComp = CreateDefaultSubobject<USAtttributeComponent>("AttributeComp");
+
+    ActionComp = CreateDefaultSubobject<USActionComponent>("ActionComp");
 
 	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Ignore);
 	GetMesh()->SetGenerateOverlapEvents(true);
