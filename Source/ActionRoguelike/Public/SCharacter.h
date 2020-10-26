@@ -11,6 +11,7 @@ class USpringArmComponent;
 class USInteractionComponent;
 class UAnimMontage;
 class USAtttributeComponent;
+class USActionComponent;
 
 UCLASS()
 class ACTIONROGUELIKE_API ASCharacter : public ACharacter
@@ -50,9 +51,11 @@ protected:
 	UPROPERTY(VisibleAnywhere)
 	USInteractionComponent* InteractionComp;
 
-
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	USAtttributeComponent* AttributeComp;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	USActionComponent* ActionComp;
 
 
 	// Called when the game starts or when spawned
@@ -70,6 +73,9 @@ protected:
 	void Dash();
 	void Dash_TimeElapsed();
 
+	void StartSprint();
+	void StopSprint();
+
 	void PrimaryInteract();
 
 	UFUNCTION()
@@ -80,14 +86,16 @@ protected:
 
 	virtual void PostInitializeComponents();
 
-	virtual FVector GetPawnViewLocation() const override;
-
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	virtual FVector GetPawnViewLocation() const override;
+
+	virtual FRotator GetPawnViewRotation() const;
 
 	UFUNCTION(Exec)
 	void HealSelf(float Amount = 100);

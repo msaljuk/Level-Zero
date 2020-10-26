@@ -9,6 +9,7 @@
 #include "Animation/AnimMontage.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "SAtttributeComponent.h"
+#include "SActionComponent.h"
 
 // Sets default values
 ASCharacter::ASCharacter()
@@ -29,6 +30,8 @@ ASCharacter::ASCharacter()
 
 	AttributeComp = CreateDefaultSubobject<USAtttributeComponent>("AttributeComp");
 
+	ActionComp = CreateDefaultSubobject<USActionComponent>("ActionComp");
+
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 
 	bUseControllerRotationYaw = false;
@@ -45,6 +48,11 @@ void ASCharacter::PostInitializeComponents()
 FVector ASCharacter::GetPawnViewLocation() const
 {
 	return CameraComp->GetComponentLocation();
+}
+
+FRotator ASCharacter::GetPawnViewRotation() const
+{
+	return CameraComp->GetComponentRotation();
 }
 
 // Called when the game starts or when spawned
@@ -71,6 +79,9 @@ void ASCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	PlayerInputComponent->BindAction("SecondaryAttack", IE_Pressed, this, &ASCharacter::SecondaryAttack);
 
 	PlayerInputComponent->BindAction("Dash", IE_Pressed, this, &ASCharacter::Dash);
+
+	PlayerInputComponent->BindAction("Sprint", IE_Pressed, this, &ASCharacter::StartSprint);
+	PlayerInputComponent->BindAction("Sprint", IE_Released, this, &ASCharacter::StopSprint);
 
 	PlayerInputComponent->BindAction("PrimaryInteract", IE_Pressed, this, &ASCharacter::PrimaryInteract);
 }
@@ -111,9 +122,7 @@ void ASCharacter::MoveRight(float Value)
 
 void ASCharacter::PrimaryAttack()
 {
-	PlayAnimMontage(AttackAnim);
-
-	GetWorldTimerManager().SetTimer(TimerHandle_PrimaryAttack, this, &ASCharacter::PrimaryAttack_TimeElapsed, 0.2f);
+	ActionComp->StartActionByName(this, "PrimaryAttack");
 }
 
 void ASCharacter::PrimaryAttack_TimeElapsed()
@@ -145,6 +154,16 @@ void ASCharacter::Dash_TimeElapsed()
 	GetWorld()->SpawnActor<AActor>(DashProjectileClass, GetProjectileSpawnTM(), GetProjectileSpawnParams());
 }
 
+
+void ASCharacter::StartSprint()
+{
+	ActionComp->StartActionByName(this, "Sprint");
+}
+
+void ASCharacter::StopSprint()
+{
+	ActionComp->StopActionByName(this, "Sprint");
+}
 
 void ASCharacter::PrimaryInteract()
 {
