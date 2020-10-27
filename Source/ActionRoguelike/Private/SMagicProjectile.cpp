@@ -73,14 +73,22 @@ void ASMagicProjectile::OnActorOverlap(UPrimitiveComponent* OverlappedComponent,
 			return;
 		}
 
+		if (ActionComp)
+		{
+			if (ThornActionEffect)
+			{
+				ActionComp->AddAction(GetInstigator(), ThornActionEffect);
+			}
+		}
+
 		// Apply Damage & Impulse
 		if (USGameplayFunctionLibrary::ApplyDirectionalDamage(GetInstigator(), OtherActor, ProjectileDamage, SweepResult))
 		{
 			Explode();
 
-			if (ActionComp)
+			if (ActionComp && BurningActionEffect)
 			{
-				ActionComp->AddAction(GetInstigator(), ActionEffect);
+				ActionComp->AddAction(GetInstigator(), BurningActionEffect);
 			}
 		}
 	}
