@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "GameplayTagContainer.h"
 #include "SCharacter.generated.h"
 
 class UCameraComponent;
@@ -39,6 +40,11 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	USActionComponent* ActionComp;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	float BlackholeRageCost;
+
+	UPROPERTY(EditDefaultsOnly)
+	FGameplayTag InsufficientBlackholeRageTag;
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -59,6 +65,9 @@ protected:
 
 	UFUNCTION()
 	void OnHealthChanged(AActor* InstigatorActor, USAtttributeComponent* OwningComp, float NewHealth, float Delta);
+
+	UFUNCTION()
+	void OnRageChanged(AActor* InstigatorActor, USAtttributeComponent* OwningComp, float NewRage, float Delta);
 
 	virtual void PostInitializeComponents();
 

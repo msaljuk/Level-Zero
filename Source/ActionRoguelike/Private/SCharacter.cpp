@@ -43,6 +43,8 @@ void ASCharacter::PostInitializeComponents()
 	Super::PostInitializeComponents();
 
 	AttributeComp->OnHealthChanged.AddDynamic(this, &ASCharacter::OnHealthChanged);
+
+	AttributeComp->OnRageChanged.AddDynamic(this, &ASCharacter::OnRageChanged);
 }
 
 FVector ASCharacter::GetPawnViewLocation() const
@@ -97,6 +99,8 @@ void ASCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	FString DebugMsg = GetNameSafe(GetOwner()) + " Rage: " + FString::SanitizeFloat(AttributeComp->Rage);
+	GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::Blue, DebugMsg);
 }
 
 void ASCharacter::MoveForward(float Value)
@@ -168,6 +172,8 @@ void ASCharacter::OnHealthChanged(AActor* InstigatorActor, USAtttributeComponent
 			{
 				MeshComp->SetScalarParameterValueOnMaterials("TimeToHit", GetWorld()->TimeSeconds);
 			}
+
+			AttributeComp->ApplyRageChange(InstigatorActor, -Delta);
 		}
 		// Dead
 		else
@@ -178,6 +184,24 @@ void ASCharacter::OnHealthChanged(AActor* InstigatorActor, USAtttributeComponent
 
 			// set Lifespan
 			SetLifeSpan(10.0f);
+		}
+	}
+}
+
+void ASCharacter::OnRageChanged(AActor* InstigatorActor, USAtttributeComponent* OwningComp, float NewRage, float Delta)
+{
+	if (NewRage < BlackholeRageCost)
+	{
+		if (!ActionComp->ActiveGameplayTags.HasTag(InsufficientBlackholeRageTag))
+		{
+			ActionComp->ActiveGameplayTags.AddTag(InsufficientBlackholeRageTag);
+		}
+	}
+	else 
+	{
+		if (ActionComp->ActiveGameplayTags.HasTag(InsufficientBlackholeRageTag))
+		{
+			ActionComp->ActiveGameplayTags.RemoveTag(InsufficientBlackholeRageTag);
 		}
 	}
 }
