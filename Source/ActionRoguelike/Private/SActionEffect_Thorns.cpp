@@ -24,7 +24,7 @@ void USActionEffect_Thorns::StartAction_Implementation(AActor* Instigator)
 	{
 		AttributeComp->OnHealthChanged.AddDynamic(this, &USActionEffect_Thorns::OnHealthChanged);
 
-		GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::Blue, "Added Thorn Dynamic");
+		// GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Blue, "Added Thorn Dynamic");
 	}
 }
 
@@ -33,6 +33,8 @@ void USActionEffect_Thorns::StopAction_Implementation(AActor* Instigator)
 	if (USAtttributeComponent* AttributeComp = GetOwnerAttributeComponent())
 	{
 		AttributeComp->OnHealthChanged.RemoveDynamic(this, &USActionEffect_Thorns::OnHealthChanged);
+
+		// GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Green, "Removed Thorn Dynamic");
 	}
 
 	Super::StopAction_Implementation(Instigator);
