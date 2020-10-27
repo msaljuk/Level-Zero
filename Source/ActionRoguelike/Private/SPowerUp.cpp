@@ -36,6 +36,8 @@ void ASPowerUp::DeactivateInteract_Implementation()
 {
 	bInteractDisabled = true;
 
+	SetActorEnableCollision(false);
+
 	StaticMeshComp->SetVisibility(false);
 
 	GetWorldTimerManager().SetTimer(InteractTimer, this, &ASPowerUp::ActivateInteract, InteractDisableDuration);
@@ -44,6 +46,8 @@ void ASPowerUp::DeactivateInteract_Implementation()
 void ASPowerUp::ActivateInteract_Implementation()
 {
 	bInteractDisabled = false;
+
+	SetActorEnableCollision(true);
 
 	StaticMeshComp->SetVisibility(true);
 }
