@@ -99,8 +99,8 @@ void ASCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	FString DebugMsg = GetNameSafe(GetOwner()) + " Rage: " + FString::SanitizeFloat(AttributeComp->Rage);
-	GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::Blue, DebugMsg);
+// 	FString DebugMsg = GetNameSafe(GetOwner()) + " Rage: " + FString::SanitizeFloat(AttributeComp->Rage);
+// 	GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::Blue, DebugMsg);
 }
 
 void ASCharacter::MoveForward(float Value)
