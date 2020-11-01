@@ -15,6 +15,9 @@ class ACTIONROGUELIKE_API USInteractionComponent : public UActorComponent
 
 public:	
 
+	UFUNCTION(Server, Reliable)
+	void ServerInteract(AActor* InFocus);
+
 	void PrimaryInteract();
 
 public:
