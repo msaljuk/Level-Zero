@@ -16,6 +16,8 @@ ASPowerUp::ASPowerUp()
 	InteractDisableDuration = 10.0f;
 
 	bInteractDisabled = false;
+
+	SetReplicates(true);
 }
 
 // Called when the game starts or when spawned

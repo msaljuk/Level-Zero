@@ -36,6 +36,8 @@ ASDashProjectile::ASDashProjectile()
 	MovementComp->bRotationFollowsVelocity = true;
 	MovementComp->bInitialVelocityInLocalSpace = true;
 	MovementComp->ProjectileGravityScale = 0.0f;
+
+	SetReplicates(true);
 }
 
 void ASDashProjectile::PostInitializeComponents()
