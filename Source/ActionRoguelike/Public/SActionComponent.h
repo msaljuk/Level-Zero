@@ -26,7 +26,7 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Actions")
 	TArray<TSubclassOf<USAction>> DefaultActions;
 
-	UPROPERTY()
+	UPROPERTY(Replicated)
 	TArray<USAction*> Actions;
 
 	// Called when the game starts
@@ -55,4 +55,6 @@ public:
 	UFUNCTION(Server, Reliable)
 	void ServerStartAction(AActor* Instigator, FName ActionName);
 		
+	bool ReplicateSubobjects(class UActorChannel* Channel, class FOutBunch* Bunch, FReplicationFlags* RepFlags) override;
+
 };

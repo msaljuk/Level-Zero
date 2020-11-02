@@ -62,11 +62,11 @@ void USActionEffect_Thorns::OnHealthChanged(AActor* InstigatorActor, USAtttribut
 
 USAtttributeComponent* USActionEffect_Thorns::GetOwnerAttributeComponent()
 {
-	USActionComponent* ActionComp = Cast<USActionComponent>(GetOwningComponent());
+	USActionComponent* ActionComponent = Cast<USActionComponent>(GetOwningComponent());
 	
-	if (ensure(ActionComp))
+	if (ensure(ActionComponent))
 	{
-		AActor* OwningActor = ActionComp->GetOwner();
+		AActor* OwningActor = ActionComponent->GetOwner();
 		
 		if (ensure(OwningActor))
 		{
