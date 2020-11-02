@@ -17,6 +17,8 @@ ASGameModeBase::ASGameModeBase()
 	SpawnTimerInterval = 2.0f;
 
 	KillCredits = 2;
+
+	PlayerStateClass = ASPlayerState::StaticClass();
 }
 
 void ASGameModeBase::StartPlay()

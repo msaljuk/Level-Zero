@@ -19,10 +19,10 @@ class ACTIONROGUELIKE_API ASPlayerState : public APlayerState
 
 public:
 
-	UPROPERTY(EditAnywhere, Category = "State")
+	UPROPERTY(Replicated, EditAnywhere, Category = "State")
 	int PlayerCredits;
 
-	UPROPERTY(EditAnywhere, Category = "State")
+	UPROPERTY(Replicated, EditAnywhere, Category = "State")
 	int MaximumPlayerCredits;
 
 	ASPlayerState();
@@ -35,4 +35,13 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void RemoveCredits(int NumCreditsToRemove);
+
+	UFUNCTION(BlueprintCallable)
+	int GetCredits();
+
+protected:
+
+	UFUNCTION(NetMulticast, Reliable)
+	void MulticastPlayerCreditsChange(APawn* Pawn, int NewCredits, int Delta);
+
 };

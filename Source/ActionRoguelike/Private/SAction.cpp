@@ -17,8 +17,6 @@ void USAction::StartAction_Implementation(AActor* Instigator)
 	// UE_LOG(LogTemp, Log, TEXT("Running: %s"), *GetNameSafe(this));
 	LogOnScreen(this, FString::Printf(TEXT("Started: %s"), *ActionName.ToString()), FColor::Green);
 
-	ensureAlways(!bIsRunning);
-
 	USActionComponent* Comp = GetOwningComponent();
 	Comp->ActiveGameplayTags.AppendTags(GrantsTags);
 

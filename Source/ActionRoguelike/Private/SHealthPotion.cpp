@@ -46,6 +46,8 @@ void ASHealthPotion::Heal(APawn* InstigatorPawn)
 			// if Health already at Max or Player does not have enough credits, ignore interaction and enable Potion again
 			else
 			{
+				GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Blue, "Health already at Max or Not enough credits to use Potion");
+
 				GetWorldTimerManager().ClearTimer(InteractTimer);
 
 				ActivateInteract();

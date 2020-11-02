@@ -3,6 +3,7 @@
 
 #include "SPowerUp.h"
 #include "Components/StaticMeshComponent.h"
+#include "Net/UnrealNetwork.h"
 
 // Sets default values
 ASPowerUp::ASPowerUp()
@@ -38,11 +39,23 @@ void ASPowerUp::DeactivateInteract_Implementation()
 {
 	bInteractDisabled = true;
 
-	SetActorEnableCollision(false);
+	OnRep_InteractDisabled();
+}
 
-	StaticMeshComp->SetVisibility(false);
+void ASPowerUp::OnRep_InteractDisabled()
+{
+	if (bInteractDisabled)
+	{
+		SetActorEnableCollision(false);
 
-	GetWorldTimerManager().SetTimer(InteractTimer, this, &ASPowerUp::ActivateInteract, InteractDisableDuration);
+		StaticMeshComp->SetVisibility(false);
+
+		GetWorldTimerManager().SetTimer(InteractTimer, this, &ASPowerUp::ActivateInteract, InteractDisableDuration);
+	}
+	else
+	{
+		ActivateInteract();
+	}
 }
 
 void ASPowerUp::ActivateInteract_Implementation()
@@ -54,3 +67,10 @@ void ASPowerUp::ActivateInteract_Implementation()
 	StaticMeshComp->SetVisibility(true);
 }
 
+
+void ASPowerUp::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(ASPowerUp, bInteractDisabled);
+}

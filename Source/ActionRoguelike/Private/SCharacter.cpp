@@ -10,6 +10,7 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "SAtttributeComponent.h"
 #include "SActionComponent.h"
+#include "SPlayerState.h"
 
 // Sets default values
 ASCharacter::ASCharacter()
@@ -35,7 +36,6 @@ ASCharacter::ASCharacter()
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 
 	bUseControllerRotationYaw = false;
-
 }
 
 void ASCharacter::PostInitializeComponents()
@@ -61,7 +61,7 @@ FRotator ASCharacter::GetPawnViewRotation() const
 void ASCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
 }
 
 // Called to bind functionality to input
@@ -98,9 +98,6 @@ void ASCharacter::HealSelf(float Amount /*= 100*/)
 void ASCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
-// 	FString DebugMsg = GetNameSafe(GetOwner()) + " Rage: " + FString::SanitizeFloat(AttributeComp->Rage);
-// 	GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::Blue, DebugMsg);
 }
 
 void ASCharacter::MoveForward(float Value)
@@ -204,4 +201,28 @@ void ASCharacter::OnRageChanged(AActor* InstigatorActor, USAtttributeComponent* 
 			ActionComp->ActiveGameplayTags.RemoveTag(InsufficientBlackholeRageTag);
 		}
 	}
+}
+
+
+void ASCharacter::OnRep_PlayerState()
+{
+	Super::OnRep_PlayerState();
+
+	ASPlayerState* CustomPlayerState = Cast<ASPlayerState>(GetPlayerState());
+
+	if (CustomPlayerState)
+	{
+		CustomPlayerState->OnCreditsChanged.AddDynamic(this, &ASCharacter::OnCreditsChanged);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Player State not found for %s"), *GetNameSafe(GetOwner()));
+	}
+}
+
+
+void ASCharacter::OnCreditsChanged(APawn* Player, int NewCredits, int Delta)
+{
+	FString DebugMsg = (GetNameSafe(Player->GetOwner()) + " Credits: " + FString::FromInt(NewCredits));
+	GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Blue, DebugMsg);
 }

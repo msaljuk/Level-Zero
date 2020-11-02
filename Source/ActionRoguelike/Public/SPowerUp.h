@@ -22,7 +22,11 @@ protected:
 	
 	float InteractDisableDuration;
 
+	UPROPERTY(ReplicatedUsing = "OnRep_InteractDisabled", BlueprintReadOnly) // RepNotify in Blueprints/Documentation
 	bool bInteractDisabled;
+
+	UFUNCTION()
+	void OnRep_InteractDisabled();
 
 	FTimerHandle InteractTimer;
 

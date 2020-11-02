@@ -2,6 +2,7 @@
 
 
 #include "SPlayerState.h"
+#include "Net/UnrealNetwork.h"
 
 ASPlayerState::ASPlayerState()
 {
@@ -18,10 +19,33 @@ void ASPlayerState::AddCredits(int NumCreditsToAdd)
 
 	PlayerCredits = NewCredits;
 
-	OnCreditsChanged.Broadcast(GetPawn(), PlayerCredits, ActualDelta);
+	if (ActualDelta != 0)
+	{
+		MulticastPlayerCreditsChange(GetPawn(), NewCredits, ActualDelta);
+	}
 }
 
 void ASPlayerState::RemoveCredits(int NumCreditsToRemove)
 {
 	AddCredits(-NumCreditsToRemove);
+}
+
+
+int ASPlayerState::GetCredits()
+{
+	return PlayerCredits;
+}
+
+void ASPlayerState::MulticastPlayerCreditsChange_Implementation(APawn* Pawn, int NewCredits, int Delta)
+{	
+	OnCreditsChanged.Broadcast(Pawn, NewCredits, Delta);
+}
+
+
+void ASPlayerState::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(ASPlayerState, PlayerCredits);
+	DOREPLIFETIME(ASPlayerState, MaximumPlayerCredits);
 }

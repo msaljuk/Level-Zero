@@ -69,7 +69,12 @@ protected:
 	UFUNCTION()
 	void OnRageChanged(AActor* InstigatorActor, USAtttributeComponent* OwningComp, float NewRage, float Delta);
 
+	UFUNCTION()
+	void OnCreditsChanged(APawn* Player, int NewCredits, int Delta);
+
 	virtual void PostInitializeComponents();
+
+	void OnRep_PlayerState() override;
 
 public:	
 	// Called every frame
