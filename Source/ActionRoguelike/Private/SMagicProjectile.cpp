@@ -75,7 +75,7 @@ void ASMagicProjectile::OnActorOverlap(UPrimitiveComponent* OverlappedComponent,
 			return;
 		}
 
-		if (ActionComp)
+		if (ActionComp && HasAuthority())
 		{
 			if (ThornActionEffect)
 			{
@@ -88,9 +88,12 @@ void ASMagicProjectile::OnActorOverlap(UPrimitiveComponent* OverlappedComponent,
 		{
 			Explode();
 
-			if (ActionComp && BurningActionEffect)
+			if (ActionComp && HasAuthority())
 			{
-				ActionComp->AddAction(GetInstigator(), BurningActionEffect);
+				if (BurningActionEffect)
+				{
+					ActionComp->AddAction(GetInstigator(), BurningActionEffect);
+				}
 			}
 		}
 	}
