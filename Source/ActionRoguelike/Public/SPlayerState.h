@@ -9,6 +9,8 @@
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnCreditsChanged, APawn*, Player, int, NewCredits, int, Delta);
 
+class USSaveGame;
+
 /**
  * 
  */
@@ -38,6 +40,12 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	int GetCredits();
+
+	UFUNCTION(BlueprintNativeEvent)
+	void SavePlayerState(USSaveGame* SaveGame);
+
+	UFUNCTION(BlueprintNativeEvent)
+	void LoadPlayerState(USSaveGame* SaveGame);
 
 protected:
 

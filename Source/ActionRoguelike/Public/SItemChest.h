@@ -21,13 +21,15 @@ public:
 
 	void Interact_Implementation(APawn* InstigatorPawn);
 
+	void OnActorLoaded_Implementation();
+
 public:	
 	// Sets default values for this actor's properties
 	ASItemChest();
 
 protected:
 
-	UPROPERTY(ReplicatedUsing="OnRep_LidOpened", BlueprintReadOnly) // RepNotify in Blueprints/Documentation
+	UPROPERTY(ReplicatedUsing="OnRep_LidOpened", BlueprintReadOnly, SaveGame) // RepNotify in Blueprints/Documentation
 	bool bLidOpened;
 
 	UFUNCTION()

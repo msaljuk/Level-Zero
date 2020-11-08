@@ -3,6 +3,7 @@
 
 #include "SPlayerState.h"
 #include "Net/UnrealNetwork.h"
+#include "SSaveGame.h"
 
 ASPlayerState::ASPlayerState()
 {
@@ -34,6 +35,23 @@ void ASPlayerState::RemoveCredits(int NumCreditsToRemove)
 int ASPlayerState::GetCredits()
 {
 	return PlayerCredits;
+}
+
+void ASPlayerState::SavePlayerState_Implementation(USSaveGame* SaveGame)
+{
+	if (SaveGame)
+	{
+		SaveGame->Credits = PlayerCredits;
+	}
+}
+
+void ASPlayerState::LoadPlayerState_Implementation(USSaveGame* SaveGame)
+{
+	if (SaveGame)
+	{
+		PlayerCredits = SaveGame->Credits;
+	}
+
 }
 
 void ASPlayerState::MulticastPlayerCreditsChange_Implementation(APawn* Pawn, int NewCredits, int Delta)
