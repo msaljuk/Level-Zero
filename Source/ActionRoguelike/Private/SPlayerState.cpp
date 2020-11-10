@@ -49,7 +49,7 @@ void ASPlayerState::LoadPlayerState_Implementation(USSaveGame* SaveGame)
 {
 	if (SaveGame)
 	{
-		PlayerCredits = SaveGame->Credits;
+		AddCredits(SaveGame->Credits);
 	}
 
 }

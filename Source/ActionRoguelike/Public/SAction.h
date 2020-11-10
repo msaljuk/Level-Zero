@@ -34,6 +34,12 @@ class ACTIONROGUELIKE_API USAction : public UObject
 protected:
 
 	UPROPERTY(Replicated)
+	float TimeStarted;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "UI")
+	UTexture2D* Icon;
+
+	UPROPERTY(Replicated)
 	USActionComponent* ActionComp;
 
 	UFUNCTION(BlueprintCallable, Category = "Action")
