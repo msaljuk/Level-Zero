@@ -57,6 +57,8 @@ protected:
 
 	void RespawnPlayer(ASCharacter* Player);
 
+	void UpdateGamePlayers(ASCharacter* Player);
+
 	UFUNCTION()
 	void RespawnPlayerElapsed(AController* Controller);
 
@@ -82,5 +84,6 @@ public:
 
 	void LoadSaveGame();
 
-
+	UPROPERTY(BlueprintReadOnly)
+	float NumberOfAlivePlayers;
 };

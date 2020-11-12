@@ -84,6 +84,9 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "Action")
 	FName ActionName;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Action")
+	int CreditsValue;
+
 	bool IsSupportedForNetworking() const override
 	{
 		return true;

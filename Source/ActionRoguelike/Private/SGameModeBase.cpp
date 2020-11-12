@@ -27,6 +27,8 @@ ASGameModeBase::ASGameModeBase()
 	PlayerStateClass = ASPlayerState::StaticClass();
 
 	SlotName = "SaveGame01";
+
+	NumberOfAlivePlayers = 0;
 }
 
 void ASGameModeBase::InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage)
@@ -51,6 +53,8 @@ void ASGameModeBase::HandleStartingNewPlayer_Implementation(APlayerController* N
 	{
 		PS->LoadPlayerState(CurrentSaveGame);
 	}
+
+	NumberOfAlivePlayers += 1;
 
 	Super::HandleStartingNewPlayer_Implementation(NewPlayer);
 }
@@ -145,12 +149,30 @@ void ASGameModeBase::RespawnPlayer(ASCharacter* Player)
 	GetWorldTimerManager().SetTimer(TimerHandle_RespawnDelay, Delegate, RespawnDelay, false);
 }
 
-void ASGameModeBase::RespawnPlayerElapsed(AController* Controller)
+void ASGameModeBase::UpdateGamePlayers(ASCharacter* Player)
 {
+	AController* Controller = Player->GetController();
+
 	if (ensure(Controller))
 	{
 		Controller->UnPossess();
 
+		NumberOfAlivePlayers -= 1;
+
+		FString DebugMsg = "Number of Alive Players: " + FString::FromInt(NumberOfAlivePlayers);
+		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Blue, DebugMsg);
+
+		if (NumberOfAlivePlayers <= 0)
+		{
+			UGameplayStatics::OpenLevel(GetWorld(), "MainMenu_Entry", "?listen");
+		}
+	}
+}
+
+void ASGameModeBase::RespawnPlayerElapsed(AController* Controller)
+{
+	if (ensure(Controller))
+	{
 		RestartPlayer(Controller);
 	}
 }
@@ -172,7 +194,7 @@ void ASGameModeBase::OnActorKilled(AActor* VictimActor, AActor* Killer)
 	// if player was killed, respawn player
 	if (PlayerVictim)
 	{
-		RespawnPlayer(PlayerVictim);
+		UpdateGamePlayers(PlayerVictim);
 	} 
 
 	// if player killed bot, give player kill credits

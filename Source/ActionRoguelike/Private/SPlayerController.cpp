@@ -4,6 +4,19 @@
 #include "SPlayerController.h"
 #include "Blueprint/UserWidget.h"
 
+
+void ASPlayerController::BeginPlayingState()
+{
+	Super::BeginPlayingState();
+
+	BlueprintBeginPlayingState();
+}
+
+void ASPlayerController::OnRep_PlayerState()
+{
+	OnPlayerStateChanged.Broadcast(PlayerState);
+}
+
 void ASPlayerController::SetPawn(APawn* InPawn)
 {
 	Super::SetPawn(InPawn);
