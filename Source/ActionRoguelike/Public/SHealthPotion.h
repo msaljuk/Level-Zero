@@ -21,6 +21,8 @@ public:
 
 	void Interact_Implementation(APawn* InstigatorPawn);
 
+	FText GetInteractText_Implementation(APawn* InstigatorPawn) override;
+
 protected:
 
 	float PotionHealingValue;
