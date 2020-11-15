@@ -35,7 +35,7 @@ protected:
 public:	
 
 	UFUNCTION(BlueprintCallable)
-	void AddToBuyStation(FName Name, TEnumAsByte<ItemType> Type, TSubclassOf<USAction> ActionClass, int Cost = 0, bool IsAlreadyPurchased = false);
+	void AddToBuyStation(FName Name, TEnumAsByte<ItemType> Type, TSubclassOf<USAction> ActionClass, int Cost = 0, bool IsAlreadyPurchased = false, bool IsSingleUseOnly = false);
 
 	UFUNCTION(BlueprintCallable)
 	bool IsPurchasable(ASPlayerState* PlayerState, USBuyStationItem* BuyStationItem);

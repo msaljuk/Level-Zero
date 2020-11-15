@@ -42,4 +42,7 @@ public:
 
 	UPROPERTY(BlueprintReadOnly)
 	bool bIsAlreadyPurchased;
+
+	UPROPERTY(BlueprintReadOnly)
+	bool bIsSingleUseOnly;
 };

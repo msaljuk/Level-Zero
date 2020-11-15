@@ -6,6 +6,7 @@
 #include "SPlayerState.h"
 #include "SCharacter.h"
 #include "SActionComponent.h"
+#include "SActionEffect.h"
 
 // Sets default values
 ASBuyStation::ASBuyStation()
@@ -25,13 +26,13 @@ void ASBuyStation::BeginPlay()
 
 			if (ensure(NewAction))
 			{
-				AddToBuyStation(NewAction->ActionName, NewAction->ActionType, ActionClass, NewAction->CreditsValue);
+				AddToBuyStation(NewAction->ActionName, NewAction->ActionType, ActionClass, NewAction->CreditsValue, false, NewAction->IsA(USActionEffect::StaticClass()));
 			}
 		}
 	}
 }
 
-void ASBuyStation::AddToBuyStation(FName Name, TEnumAsByte<ItemType> Type, TSubclassOf<USAction> ActionClass, int Cost /*= 0*/, bool IsAlreadyPurchased /*= false*/)
+void ASBuyStation::AddToBuyStation(FName Name, TEnumAsByte<ItemType> Type, TSubclassOf<USAction> ActionClass, int Cost /*= 0*/, bool IsAlreadyPurchased /*= false*/, bool IsSingleUseOnly /*= false*/)
 {
 	USBuyStationItem* NewItem = NewObject<USBuyStationItem>(this);
 
@@ -40,6 +41,9 @@ void ASBuyStation::AddToBuyStation(FName Name, TEnumAsByte<ItemType> Type, TSubc
 	NewItem->BuyItemAction = ActionClass;
 	NewItem->CreditsRequiredToPurchase = Cost;
 	NewItem->bIsAlreadyPurchased = IsAlreadyPurchased;
+	NewItem->bIsSingleUseOnly = IsSingleUseOnly;
+
+	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Black, IsSingleUseOnly ? "True" : "False");
 
 	BuyStationItems.Add(NewItem);
 }
@@ -52,8 +56,18 @@ bool ASBuyStation::IsPurchasable(ASPlayerState* PlayerState, USBuyStationItem* B
 
 		int CurrentCredits = PlayerState->PlayerCredits;
 
-		if (CurrentCredits - ItemCost >= 0 && !BuyStationItem->bIsAlreadyPurchased)
+		if (CurrentCredits - ItemCost >= 0)
 		{
+			if (BuyStationItem->bIsAlreadyPurchased)
+			{
+				if (BuyStationItem->bIsSingleUseOnly)
+				{
+					return true;
+				}
+
+				return false;
+			}
+
 			return true;
 		}
 		else
