@@ -43,8 +43,6 @@ void ASBuyStation::AddToBuyStation(FName Name, TEnumAsByte<ItemType> Type, TSubc
 	NewItem->bIsAlreadyPurchased = IsAlreadyPurchased;
 	NewItem->bIsSingleUseOnly = IsSingleUseOnly;
 
-	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Black, IsSingleUseOnly ? "True" : "False");
-
 	BuyStationItems.Add(NewItem);
 }
 
