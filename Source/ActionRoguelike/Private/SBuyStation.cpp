@@ -25,10 +25,7 @@ void ASBuyStation::BeginPlay()
 
 			if (ensure(NewAction))
 			{
-				FName ActionName = NewAction->ActionName;
-				int ActionCreditsCost = NewAction->CreditsValue;
-
-				AddToBuyStation(ActionName, ItemType::Attack, ActionClass, ActionCreditsCost);
+				AddToBuyStation(NewAction->ActionName, NewAction->ActionType, ActionClass, NewAction->CreditsValue);
 			}
 		}
 	}

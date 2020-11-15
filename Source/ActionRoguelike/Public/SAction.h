@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
 #include "GameplayTagContainer.h"
+#include "SBuyStationItem.h"
 #include "SAction.generated.h"
 
 USTRUCT()
@@ -86,6 +87,9 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Action")
 	int CreditsValue;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Action")
+	TEnumAsByte<ItemType> ActionType;
 
 	bool IsSupportedForNetworking() const override
 	{
