@@ -4,9 +4,13 @@
 #include "SCoin.h"
 #include "SPlayerState.h"
 
+#define LOCTEXT_NAMESPACE "InteractableActors"
+
 ASCoin::ASCoin()
 {
 	CoinCredits = 1;
+
+	bShouldDestroyAfterFirstUse = false;
 }
 
 void ASCoin::Interact_Implementation(APawn* InstigatorPawn)
@@ -16,6 +20,13 @@ void ASCoin::Interact_Implementation(APawn* InstigatorPawn)
 		DeactivateInteract();
 
 		GivePlayerCoinCredits(InstigatorPawn);
+
+		if (bShouldDestroyAfterFirstUse)
+		{
+			GetWorldTimerManager().ClearTimer(InteractTimer);
+
+			Destroy();
+		}
 	}
 }
 
@@ -43,3 +54,14 @@ void ASCoin::GivePlayerCoinCredits(APawn* InstigatorPawn)
 	}
 }
 
+void ASCoin::SetCoinCredits(int UpdatedCoinCredits)
+{
+	CoinCredits = UpdatedCoinCredits;
+}
+
+FText ASCoin::GetInteractText_Implementation(APawn* InstigatorPawn)
+{
+	return FText::Format(LOCTEXT("CoinCredits_InteractMessage", "Pickup {0} Credits"), CoinCredits);
+}
+
+#undef LOCTEXT_NAMESPACE 

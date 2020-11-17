@@ -40,5 +40,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	float GetTimeRemaining() const;
 
+	UFUNCTION(BlueprintCallable)
+	float GetDuration() const;
+
 	USActionEffect();
 };

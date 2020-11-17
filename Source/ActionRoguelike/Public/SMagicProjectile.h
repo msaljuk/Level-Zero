@@ -32,6 +32,9 @@ protected:
 	TSubclassOf<USActionEffect> ThornActionEffect;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Damage")
+	TSubclassOf<USActionEffect> DoubleDamageActionEffect;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Damage")
 	FGameplayTag ParryTag;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)

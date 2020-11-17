@@ -35,7 +35,7 @@ public:
 	TEnumAsByte<ItemType> BuyItemType;
 
 	UPROPERTY(BlueprintReadOnly)
-	TSubclassOf<USAction> BuyItemAction;
+	TSubclassOf<USAction> BuyItemActionClass;
 
 	UPROPERTY(BlueprintReadOnly)
 	int CreditsRequiredToPurchase;
@@ -44,5 +44,5 @@ public:
 	bool bIsAlreadyPurchased;
 
 	UPROPERTY(BlueprintReadOnly)
-	bool bIsSingleUseOnly;
+	float Duration;
 };

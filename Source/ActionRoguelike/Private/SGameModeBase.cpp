@@ -19,6 +19,7 @@
 #include "Engine/AssetManager.h"
 #include "SActionComponent.h"
 #include "../ActionRoguelike.h"
+#include "SCoin.h"
 
 static TAutoConsoleVariable<bool> CVarSpawnBots(TEXT("su.SpawnBots"), false, TEXT("Enable spawning of bots via timer."), ECVF_Cheat);
 
@@ -189,15 +190,54 @@ void ASGameModeBase::OnMonsterLoaded(FPrimaryAssetId LoadedId, FVector SpawnLoca
 	}
 }
 
-void ASGameModeBase::RespawnPlayer(ASCharacter* Player)
+void ASGameModeBase::OnActorKilled(AActor* VictimActor, AActor* Killer)
 {
-	FTimerHandle TimerHandle_RespawnDelay;
+	ASCharacter* PlayerVictim = Cast<ASCharacter>(VictimActor);
 
-	FTimerDelegate Delegate;
-	Delegate.BindUFunction(this, "RespawnPlayerElapsed", Player->GetController());
+	// if player was killed, respawn player
+	if (PlayerVictim)
+	{
+		SpawnPlayerCredits(PlayerVictim);
 
-	float RespawnDelay = 2.0f;
-	GetWorldTimerManager().SetTimer(TimerHandle_RespawnDelay, Delegate, RespawnDelay, false);
+		UpdateGamePlayers(PlayerVictim);
+	}
+
+	// if player killed bot, give player kill credits
+	else
+	{
+		ASCharacter* PlayerKiller = Cast<ASCharacter>(Killer);
+
+		if (PlayerKiller)
+		{
+			GivePlayerKillCredits(PlayerKiller);
+		}
+	}
+
+	UE_LOG(LogTemp, Log, TEXT("OnActorKilled: Victim: %s, Killer: %s"), *GetNameSafe(VictimActor), *GetNameSafe(Killer));
+}
+
+void ASGameModeBase::SpawnPlayerCredits(ASCharacter* Player)
+{
+	ASPlayerState* PlayerState = Player->GetPlayerState<ASPlayerState>();
+
+	if (PlayerState)
+	{
+		FVector SpawnLocation = Player->GetActorLocation();
+
+		AActor* DeadPlayerCredits = GetWorld()->SpawnActor<AActor>(PlayerCreditsPickup, SpawnLocation, FRotator::ZeroRotator);
+
+		if (DeadPlayerCredits)
+		{
+			ASCoin* CoinCredits = Cast<ASCoin>(DeadPlayerCredits);
+
+			if (CoinCredits)
+			{
+				CoinCredits->SetCoinCredits(PlayerState->PlayerCredits);
+
+				CoinCredits->bShouldDestroyAfterFirstUse = true;
+			}
+		}
+	}
 }
 
 void ASGameModeBase::UpdateGamePlayers(ASCharacter* Player)
@@ -220,14 +260,6 @@ void ASGameModeBase::UpdateGamePlayers(ASCharacter* Player)
 	}
 }
 
-void ASGameModeBase::RespawnPlayerElapsed(AController* Controller)
-{
-	if (ensure(Controller))
-	{
-		RestartPlayer(Controller);
-	}
-}
-
 
 void ASGameModeBase::GivePlayerKillCredits(ASCharacter* Player)
 {
@@ -238,30 +270,24 @@ void ASGameModeBase::GivePlayerKillCredits(ASCharacter* Player)
 	UE_LOG(LogTemp, Log, TEXT("PlayerCredits: %d"), PlayerState->PlayerCredits);
 }
 
-void ASGameModeBase::OnActorKilled(AActor* VictimActor, AActor* Killer)
+void ASGameModeBase::RespawnPlayer(ASCharacter* Player)
 {
-	ASCharacter* PlayerVictim = Cast<ASCharacter>(VictimActor);
+	FTimerHandle TimerHandle_RespawnDelay;
 
-	// if player was killed, respawn player
-	if (PlayerVictim)
-	{
-		UpdateGamePlayers(PlayerVictim);
-	} 
+	FTimerDelegate Delegate;
+	Delegate.BindUFunction(this, "RespawnPlayerElapsed", Player->GetController());
 
-	// if player killed bot, give player kill credits
-	else 
-	{
-		ASCharacter* PlayerKiller = Cast<ASCharacter>(Killer);
-
-		if (PlayerKiller)
-		{
-			GivePlayerKillCredits(PlayerKiller);
-		}
-	}
-
-	UE_LOG(LogTemp, Log, TEXT("OnActorKilled: Victim: %s, Killer: %s"), *GetNameSafe(VictimActor), *GetNameSafe(Killer));
+	float RespawnDelay = 2.0f;
+	GetWorldTimerManager().SetTimer(TimerHandle_RespawnDelay, Delegate, RespawnDelay, false);
 }
 
+void ASGameModeBase::RespawnPlayerElapsed(AController* Controller)
+{
+	if (ensure(Controller))
+	{
+		RestartPlayer(Controller);
+	}
+}
 
 void ASGameModeBase::WriteSaveGame()
 {

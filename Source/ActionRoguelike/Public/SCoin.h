@@ -20,6 +20,13 @@ public:
 
 	void Interact_Implementation(APawn* InstigatorPawn);
 
+	void SetCoinCredits(int UpdatedCoinCredits);
+
+	UPROPERTY(EditDefaultsOnly)
+	bool bShouldDestroyAfterFirstUse;
+
+	FText GetInteractText_Implementation(APawn* InstigatorPawn) override;
+
 protected:
 
 	UPROPERTY(EditDefaultsOnly)

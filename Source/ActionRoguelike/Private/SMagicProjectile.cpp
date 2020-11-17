@@ -83,11 +83,24 @@ void ASMagicProjectile::OnActorOverlap(UPrimitiveComponent* OverlappedComponent,
 // 			}
 // 		}
 
-		// Apply Damage & Impulse
+		// Double Projectile Damage Value if Double Damage Buff Present For Instigator
+		USActionComponent* InstigatorActionComp = Cast<USActionComponent>(GetInstigator()->GetComponentByClass(USActionComponent::StaticClass()));
+
+		if (InstigatorActionComp && HasAuthority())
+		{	
+			if (InstigatorActionComp->ContainsAction(DoubleDamageActionEffect))
+			{
+				ProjectileDamage *= 2;
+			} 
+		}
+		
+
+		// Apply Damage and Impulse
 		if (USGameplayFunctionLibrary::ApplyDirectionalDamage(GetInstigator(), OtherActor, ProjectileDamage, SweepResult))
 		{
 			Explode();
 
+			// Apply Burning Buff (If Present)
 			if (ActionComp && HasAuthority())
 			{
 				if (BurningActionEffect)
@@ -96,6 +109,7 @@ void ASMagicProjectile::OnActorOverlap(UPrimitiveComponent* OverlappedComponent,
 				}
 			}
 		}
+
 	}
 }
 

@@ -74,6 +74,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Gameplay")
 	int KillCredits;
 
+	UPROPERTY(EditAnywhere, Category = "Credits")
+	TSubclassOf<AActor> PlayerCreditsPickup;
+
 	UFUNCTION()
 	void SpawnBotTimerElapsed();
 
@@ -94,6 +97,8 @@ protected:
 	void RespawnPlayer(ASCharacter* Player);
 
 	void UpdateGamePlayers(ASCharacter* Player);
+
+	void SpawnPlayerCredits(ASCharacter* Player);
 
 	UFUNCTION()
 	void RespawnPlayerElapsed(AController* Controller);

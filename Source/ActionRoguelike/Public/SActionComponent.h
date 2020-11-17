@@ -27,13 +27,13 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Actions")
 	TArray<TSubclassOf<USAction>> DefaultActions;
 
-	UPROPERTY(Replicated, BlueprintReadOnly)
-	TArray<USAction*> Actions;
-
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
-public:	
+public:
+
+	UPROPERTY(Replicated, BlueprintReadOnly)
+	TArray<USAction*> Actions;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tags")
 	FGameplayTagContainer ActiveGameplayTags;
@@ -46,6 +46,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Actions")
 	void RemoveAction(USAction* ActionToRemove);
+
+	UFUNCTION(BlueprintCallable, Category = "Actions")
+	bool ContainsAction(TSubclassOf<USAction> ActionClass);
 	
 	UFUNCTION(BlueprintCallable, Category = "Actions")
 	bool StartActionByName(AActor* Instigator, FName ActionName);

@@ -32,10 +32,13 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	UFUNCTION()
+	void ResetPurchaseStatus(USBuyStationItem* BuyStationItem);
+
 public:	
 
 	UFUNCTION(BlueprintCallable)
-	void AddToBuyStation(FName Name, TEnumAsByte<ItemType> Type, TSubclassOf<USAction> ActionClass, int Cost = 0, bool IsAlreadyPurchased = false, bool IsSingleUseOnly = false);
+	void AddToBuyStation(FName Name, TEnumAsByte<ItemType> Type, TSubclassOf<USAction> ActionClass, int Cost = 0, float Duration = -1.0f, bool IsAlreadyPurchased = false);
 
 	UFUNCTION(BlueprintCallable)
 	bool IsPurchasable(ASPlayerState* PlayerState, USBuyStationItem* BuyStationItem);

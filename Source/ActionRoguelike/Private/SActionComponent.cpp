@@ -85,6 +85,31 @@ void USActionComponent::RemoveAction(USAction* ActionToRemove)
 	Actions.Remove(ActionToRemove);
 }
 
+bool USActionComponent::ContainsAction(TSubclassOf<USAction> ActionClass)
+{
+	if (!ensure(ActionClass))
+	{
+		return false;
+	}
+
+	if (!GetOwner()->HasAuthority())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Client attempting to check Actions Array."));
+
+		return false;
+	}
+
+	for (USAction* Action : Actions)
+	{
+		if (Action && Action->IsA(ActionClass))
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
 bool USActionComponent::StartActionByName(AActor* Instigator, FName ActionName)
 {
 	for (USAction* Action : Actions)

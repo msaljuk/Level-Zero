@@ -68,6 +68,11 @@ float USActionEffect::GetTimeRemaining() const
 }
 
 
+float USActionEffect::GetDuration() const
+{
+	return Duration;
+}
+
 void USActionEffect::ExecutePeriodicEffect_Implementation(AActor* Instigator)
 {
 
