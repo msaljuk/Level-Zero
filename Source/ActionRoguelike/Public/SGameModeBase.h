@@ -94,8 +94,6 @@ protected:
 
 	void OnMonsterLoaded(FPrimaryAssetId LoadedId, FVector SpawnLocation);
 
-	void RespawnPlayer(ASCharacter* Player);
-
 	void UpdateGamePlayers(ASCharacter* Player);
 
 	void SpawnPlayerCredits(ASCharacter* Player);
@@ -119,6 +117,9 @@ public:
 
 	UFUNCTION(Exec)
 	void KillAllAI();
+
+	UFUNCTION(BlueprintCallable)
+	void RespawnPlayer(AController* Controller);
 
 	UFUNCTION(BlueprintCallable, Category = "Save")
 	void WriteSaveGame();

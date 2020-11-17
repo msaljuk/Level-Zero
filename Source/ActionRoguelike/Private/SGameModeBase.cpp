@@ -270,12 +270,12 @@ void ASGameModeBase::GivePlayerKillCredits(ASCharacter* Player)
 	UE_LOG(LogTemp, Log, TEXT("PlayerCredits: %d"), PlayerState->PlayerCredits);
 }
 
-void ASGameModeBase::RespawnPlayer(ASCharacter* Player)
+void ASGameModeBase::RespawnPlayer(AController* Controller)
 {
 	FTimerHandle TimerHandle_RespawnDelay;
 
 	FTimerDelegate Delegate;
-	Delegate.BindUFunction(this, "RespawnPlayerElapsed", Player->GetController());
+	Delegate.BindUFunction(this, "RespawnPlayerElapsed", Controller);
 
 	float RespawnDelay = 2.0f;
 	GetWorldTimerManager().SetTimer(TimerHandle_RespawnDelay, Delegate, RespawnDelay, false);
@@ -286,6 +286,8 @@ void ASGameModeBase::RespawnPlayerElapsed(AController* Controller)
 	if (ensure(Controller))
 	{
 		RestartPlayer(Controller);
+
+		NumberOfAlivePlayers += 1;
 	}
 }
 
