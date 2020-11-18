@@ -12,6 +12,7 @@
 // Sets default values
 ASBuyStation::ASBuyStation()
 {
+	SetReplicates(true);
 }
 
 // Called when the game starts or when spawned
@@ -80,19 +81,21 @@ bool ASBuyStation::IsPurchasable(ASPlayerState* PlayerState, USBuyStationItem* B
 	return false;
 }
 
-bool ASBuyStation::PurchaseItem(ASCharacter* PlayerCharacter, USBuyStationItem* BuyStationItem)
+void ASBuyStation::PurchaseItem(ASCharacter* PlayerCharacter, USBuyStationItem* BuyStationItem)
 {
+
 	USActionComponent* ActionComp = Cast<USActionComponent>(PlayerCharacter->GetComponentByClass(USActionComponent::StaticClass()));
 
-	if (ActionComp)
+	if (ensure(ActionComp))
 	{
+
 		ASPlayerState* PlayerState = PlayerCharacter->GetPlayerState<ASPlayerState>();
 
-		if (PlayerState)
+		if (ensure(PlayerState))
 		{
-			ActionComp->AddAction(PlayerCharacter, BuyStationItem->BuyItemActionClass);
+			ActionComp->ClientAddAction(PlayerCharacter, BuyStationItem->BuyItemActionClass);
 
-			PlayerState->RemoveCredits(BuyStationItem->CreditsRequiredToPurchase);
+			PlayerState->ClientUpdateCredits(-BuyStationItem->CreditsRequiredToPurchase);
 
 			BuyStationItem->bIsAlreadyPurchased = true;
 
@@ -109,12 +112,8 @@ bool ASBuyStation::PurchaseItem(ASCharacter* PlayerCharacter, USBuyStationItem* 
 			}
 
 			OnBuyStationChanged.Broadcast(this);
-
-			return true;
 		}
 	}
-
-	return false;
 }
 
 void ASBuyStation::ResetPurchaseStatus(USBuyStationItem* BuyStationItem)
@@ -123,4 +122,3 @@ void ASBuyStation::ResetPurchaseStatus(USBuyStationItem* BuyStationItem)
 
 	OnBuyStationChanged.Broadcast(this);
 }
-

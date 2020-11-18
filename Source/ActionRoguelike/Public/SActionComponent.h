@@ -56,6 +56,12 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Actions")
 	bool StopActionByName(AActor* Instigator, FName ActionName);
 
+	UFUNCTION(BlueprintCallable, Category = "Actions")
+	void ClientAddAction(AActor* Instigator, TSubclassOf<USAction> ActionClass);
+
+	UFUNCTION(Server, Reliable)
+	void ServerAddAction(AActor* Instigator, TSubclassOf<USAction> ActionClass);
+
 	UFUNCTION(Server, Reliable)
 	void ServerStartAction(AActor* Instigator, FName ActionName);
 

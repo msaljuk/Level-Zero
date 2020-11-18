@@ -31,6 +31,15 @@ void ASPlayerState::RemoveCredits(int NumCreditsToRemove)
 	AddCredits(-NumCreditsToRemove);
 }
 
+void ASPlayerState::ClientUpdateCredits(int NumCredits)
+{
+	ServerUpdateCredits(NumCredits);
+}
+
+void ASPlayerState::ServerUpdateCredits_Implementation(int NumCredits)
+{
+	AddCredits(NumCredits);
+}
 
 int ASPlayerState::GetCredits()
 {

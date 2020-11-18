@@ -39,6 +39,12 @@ public:
 	void RemoveCredits(int NumCreditsToRemove);
 
 	UFUNCTION(BlueprintCallable)
+	void ClientUpdateCredits(int NumCredits);
+
+	UFUNCTION(Server, Reliable)
+	void ServerUpdateCredits(int NumCredits);
+
+	UFUNCTION(BlueprintCallable)
 	int GetCredits();
 
 	UFUNCTION(BlueprintNativeEvent)

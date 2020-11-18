@@ -22,7 +22,7 @@ public:
 	// Sets default values for this actor's properties
 	ASBuyStation();
 
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(/*Replicated, */BlueprintReadOnly)
 	TArray<USBuyStationItem*> BuyStationItems;
 
 	UPROPERTY(EditAnywhere)
@@ -44,7 +44,7 @@ public:
 	bool IsPurchasable(ASPlayerState* PlayerState, USBuyStationItem* BuyStationItem);
 
 	UFUNCTION(BlueprintCallable)
-	bool PurchaseItem(ASCharacter* PlayerCharacter, USBuyStationItem* BuyStationItem);
+	void PurchaseItem(ASCharacter* PlayerCharacter, USBuyStationItem* BuyStationItem);
 
 	UPROPERTY(BlueprintAssignable)
 	FOnBuyStationChanged OnBuyStationChanged;

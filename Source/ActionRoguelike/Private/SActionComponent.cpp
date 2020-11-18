@@ -160,6 +160,16 @@ bool USActionComponent::StopActionByName(AActor* Instigator, FName ActionName)
 	return false;
 }
 
+void USActionComponent::ClientAddAction(AActor* Instigator, TSubclassOf<USAction> ActionClass)
+{
+	ServerAddAction(Instigator, ActionClass);
+}
+
+void USActionComponent::ServerAddAction_Implementation(AActor* Instigator, TSubclassOf<USAction> ActionClass)
+{
+	AddAction(Instigator, ActionClass);
+}
+
 void USActionComponent::ServerStartAction_Implementation(AActor* Instigator, FName ActionName)
 {
 	StartActionByName(Instigator, ActionName);
