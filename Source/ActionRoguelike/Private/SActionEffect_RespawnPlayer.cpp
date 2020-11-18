@@ -5,26 +5,13 @@
 #include "SGameModeBase.h"
 #include "SPlayerState.h"
 #include "SDefaultMenuWidget.h"
+#include "SPlayerController.h"
 
 void USActionEffect_RespawnPlayer::StartAction_Implementation(AActor* Instigator)
 {
 	Super::StartAction_Implementation(Instigator);
 
-	FindRespawnablePlayers();
-
 	CreateRespawnSelectorWidget(Instigator);
-}
-
-void USActionEffect_RespawnPlayer::FindRespawnablePlayers()
-{
-	for (FConstPlayerControllerIterator Iterator = GetWorld()->GetPlayerControllerIterator(); Iterator; ++Iterator)
-	{
-		APlayerController* PlayerController = Iterator->Get();
-		if (!PlayerController->GetPawn())
-		{
-			RespawnablePlayers.Add(PlayerController);
-		}
-	}
 }
 
 void USActionEffect_RespawnPlayer::CreateRespawnSelectorWidget(AActor* Instigator)
@@ -41,12 +28,13 @@ void USActionEffect_RespawnPlayer::CreateRespawnSelectorWidget(AActor* Instigato
 	}
 }
 
-void USActionEffect_RespawnPlayer::RespawnSelectedPlayer(AController* Controller)
+void USActionEffect_RespawnPlayer::RespawnSelectedPlayer(AController* BuyingController, APlayerState* TargetPlayerState)
 {
-	ASGameModeBase* GameMode = GetWorld()->GetAuthGameMode<ASGameModeBase>();
-	if (GameMode)
+	ASPlayerController* SPlayerController = Cast<ASPlayerController>(BuyingController);
+
+	if (SPlayerController)
 	{
-		GameMode->RespawnPlayer(Controller);
+		SPlayerController->ServerRespawnPlayerFromId(TargetPlayerState->GetPlayerId());
 	}
 
 	RespawnWidgetInstance->RemoveFromParent();

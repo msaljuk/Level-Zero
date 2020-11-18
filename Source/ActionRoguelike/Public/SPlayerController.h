@@ -16,6 +16,11 @@ UCLASS()
 class ACTIONROGUELIKE_API ASPlayerController : public APlayerController
 {
 	GENERATED_BODY()
+
+public:
+
+	UFUNCTION(Server, Reliable)
+	void ServerRespawnPlayerFromId(int32 TargetPlayerId);
 	
 protected:
 

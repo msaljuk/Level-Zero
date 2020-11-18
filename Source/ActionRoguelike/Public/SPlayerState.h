@@ -26,6 +26,9 @@ public:
 
 	UPROPERTY(Replicated, EditAnywhere, Category = "State")
 	int MaximumPlayerCredits;
+	
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly, Category = "State")
+	bool bIsPlayerAlive;
 
 	ASPlayerState();
 
@@ -43,6 +46,9 @@ public:
 
 	UFUNCTION(Server, Reliable)
 	void ServerUpdateCredits(int NumCredits);
+
+	UFUNCTION(Server, Reliable)
+	void ServerToggleIsAlive();
 
 	UFUNCTION(BlueprintCallable)
 	int GetCredits();

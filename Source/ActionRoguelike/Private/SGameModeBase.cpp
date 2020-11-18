@@ -20,6 +20,7 @@
 #include "SActionComponent.h"
 #include "../ActionRoguelike.h"
 #include "SCoin.h"
+#include "SBuyStation.h"
 
 static TAutoConsoleVariable<bool> CVarSpawnBots(TEXT("su.SpawnBots"), false, TEXT("Enable spawning of bots via timer."), ECVF_Cheat);
 
@@ -250,6 +251,9 @@ void ASGameModeBase::UpdateGamePlayers(ASCharacter* Player)
 
 		NumberOfAlivePlayers -= 1;
 
+		ASPlayerState* PlayerState = Controller->GetPlayerState<ASPlayerState>();
+		PlayerState->ServerToggleIsAlive();
+
 		FString DebugMsg = "Number of Alive Players: " + FString::FromInt(NumberOfAlivePlayers);
 		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Blue, DebugMsg);
 
@@ -270,24 +274,19 @@ void ASGameModeBase::GivePlayerKillCredits(ASCharacter* Player)
 	UE_LOG(LogTemp, Log, TEXT("PlayerCredits: %d"), PlayerState->PlayerCredits);
 }
 
-void ASGameModeBase::RespawnPlayer(AController* Controller)
-{
-	FTimerHandle TimerHandle_RespawnDelay;
-
-	FTimerDelegate Delegate;
-	Delegate.BindUFunction(this, "RespawnPlayerElapsed", Controller);
-
-	float RespawnDelay = 2.0f;
-	GetWorldTimerManager().SetTimer(TimerHandle_RespawnDelay, Delegate, RespawnDelay, false);
-}
-
-void ASGameModeBase::RespawnPlayerElapsed(AController* Controller)
+void ASGameModeBase::RespawnPlayer_Implementation(AController* Controller)
 {
 	if (ensure(Controller))
 	{
-		RestartPlayer(Controller);
+		while (Controller->GetPawn() == nullptr)
+		{
+			RestartPlayer(Controller);
+		}
 
 		NumberOfAlivePlayers += 1;
+
+		ASPlayerState* PlayerState = Controller->GetPlayerState<ASPlayerState>();
+		PlayerState->ServerToggleIsAlive();
 	}
 }
 

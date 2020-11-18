@@ -3,6 +3,7 @@
 
 #include "SCoin.h"
 #include "SPlayerState.h"
+#include "Net/UnrealNetwork.h"
 
 #define LOCTEXT_NAMESPACE "InteractableActors"
 
@@ -57,6 +58,13 @@ void ASCoin::GivePlayerCoinCredits(APawn* InstigatorPawn)
 void ASCoin::SetCoinCredits(int UpdatedCoinCredits)
 {
 	CoinCredits = UpdatedCoinCredits;
+}
+
+void ASCoin::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(ASCoin, CoinCredits);
 }
 
 FText ASCoin::GetInteractText_Implementation(APawn* InstigatorPawn)

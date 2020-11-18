@@ -98,9 +98,6 @@ protected:
 
 	void SpawnPlayerCredits(ASCharacter* Player);
 
-	UFUNCTION()
-	void RespawnPlayerElapsed(AController* Controller);
-
 	void GivePlayerKillCredits(ASCharacter* Player);
 
 public:
@@ -118,7 +115,7 @@ public:
 	UFUNCTION(Exec)
 	void KillAllAI();
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(Server, Reliable, BlueprintCallable)
 	void RespawnPlayer(AController* Controller);
 
 	UFUNCTION(BlueprintCallable, Category = "Save")

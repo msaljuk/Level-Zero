@@ -10,6 +10,8 @@ ASPlayerState::ASPlayerState()
 	PlayerCredits = 0;
 
 	MaximumPlayerCredits = 100;
+
+	bIsPlayerAlive = true;
 }
 
 void ASPlayerState::AddCredits(int NumCreditsToAdd)
@@ -39,6 +41,11 @@ void ASPlayerState::ClientUpdateCredits(int NumCredits)
 void ASPlayerState::ServerUpdateCredits_Implementation(int NumCredits)
 {
 	AddCredits(NumCredits);
+}
+
+void ASPlayerState::ServerToggleIsAlive_Implementation()
+{
+	bIsPlayerAlive = !bIsPlayerAlive;
 }
 
 int ASPlayerState::GetCredits()
@@ -75,4 +82,5 @@ void ASPlayerState::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& 
 
 	DOREPLIFETIME(ASPlayerState, PlayerCredits);
 	DOREPLIFETIME(ASPlayerState, MaximumPlayerCredits);
+	DOREPLIFETIME(ASPlayerState, bIsPlayerAlive);
 }

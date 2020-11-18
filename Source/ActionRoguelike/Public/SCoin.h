@@ -29,7 +29,7 @@ public:
 
 protected:
 
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(Replicated, EditDefaultsOnly)
 	int CoinCredits;
 
 	void GivePlayerCoinCredits(APawn* InstigatorPawn);

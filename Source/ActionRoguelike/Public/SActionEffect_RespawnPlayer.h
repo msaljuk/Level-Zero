@@ -27,12 +27,10 @@ protected:
 	void StartAction_Implementation(AActor* Instigator) override;
 
 	UFUNCTION(BlueprintCallable)
-	void RespawnSelectedPlayer(AController* Controller);
+	void RespawnSelectedPlayer(AController* BuyingController, APlayerState* TargetPlayerState);
 
 	UFUNCTION(BlueprintCallable)
 	void CancelRespawn(AController* BuyingController);
-
-	void FindRespawnablePlayers();
 
 	void CreateRespawnSelectorWidget(AActor* Instigator);
 

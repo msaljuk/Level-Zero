@@ -3,6 +3,9 @@
 
 #include "SPlayerController.h"
 #include "Blueprint/UserWidget.h"
+#include "SGameModeBase.h"
+#include "GameFramework/PlayerController.h"
+#include "GameFramework/PlayerState.h"
 
 
 void ASPlayerController::BeginPlayingState()
@@ -22,6 +25,27 @@ void ASPlayerController::SetPawn(APawn* InPawn)
 	Super::SetPawn(InPawn);
 
 	OnPawnChanged.Broadcast(InPawn);
+}
+
+void ASPlayerController::ServerRespawnPlayerFromId_Implementation(int32 TargetPlayerId)
+{
+	for (FConstPlayerControllerIterator Iterator = GetWorld()->GetPlayerControllerIterator(); Iterator; ++Iterator)
+	{
+		APlayerController* PlayerController = Iterator->Get();
+		
+		if (PlayerController->PlayerState->GetPlayerId() == TargetPlayerId)
+		{
+			ASGameModeBase* GameMode = GetWorld()->GetAuthGameMode<ASGameModeBase>();
+			if (GameMode)
+			{
+				GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Blue, "Respawning...");
+
+				GameMode->RespawnPlayer(PlayerController);
+			}
+
+			break;
+		}
+	}
 }
 
 void ASPlayerController::TogglePawnMenu()
