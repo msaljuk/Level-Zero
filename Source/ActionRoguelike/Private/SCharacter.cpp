@@ -35,6 +35,8 @@ ASCharacter::ASCharacter()
 
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 
+	GetMesh()->SetGenerateOverlapEvents(true);
+
 	bUseControllerRotationYaw = false;
 }
 

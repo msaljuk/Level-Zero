@@ -22,7 +22,7 @@ ASAICharacter::ASAICharacter()
 
     ActionComp = CreateDefaultSubobject<USActionComponent>("ActionComp");
 
-	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Ignore);
+	// GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Ignore);
 	GetMesh()->SetGenerateOverlapEvents(true);
 
     AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
