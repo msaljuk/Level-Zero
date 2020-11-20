@@ -106,19 +106,21 @@ bool USAtttributeComponent::ApplyHealthChange(AActor* InstigatorActor, float Del
 bool USAtttributeComponent::ApplyRageChange(AActor* InstigatorActor, float Delta)
 {
 	float OldRage = Rage;
+	float NewRage = FMath::Clamp(Rage + Delta, 0.0f, RageMax);
 
-	Rage = FMath::Clamp(Rage + Delta, 0.0f, RageMax);
+	float ActualDelta = NewRage - OldRage;
 
-	float ActualDelta = Rage - OldRage;
-
-	if (ActualDelta != 0)
+	if (GetOwner()->HasAuthority())
 	{
-		MulticastRageChanged(InstigatorActor, Rage, ActualDelta);
+		Rage = NewRage;
 
-		return true;
+		if (ActualDelta != 0)
+		{
+			MulticastRageChanged(InstigatorActor, Rage, ActualDelta);
+		}
 	}
 
-	return false;
+	return ActualDelta != 0; 
 }
 
 void USAtttributeComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
