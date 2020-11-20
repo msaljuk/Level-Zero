@@ -37,6 +37,8 @@ ASMagicProjectile::ASMagicProjectile()
 	ExplosionDelay = 7.0f;
 	ProjectileDamage = 20.0f;
 
+	InitialLifeSpan = 10.0f;
+
 	AudioComp = CreateDefaultSubobject<UAudioComponent>("AudioComp");
 	AudioComp->SetupAttachment(RootComponent);
 

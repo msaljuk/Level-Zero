@@ -7,6 +7,9 @@
 #include "Net/UnrealNetwork.h"
 #include "Engine/ActorChannel.h"
 
+
+DECLARE_CYCLE_STAT(TEXT("StartActionByName"), STAT_StartActionByName, STATGROUP_STANFORD);
+
 // Sets default values for this component's properties
 USActionComponent::USActionComponent()
 {
@@ -28,6 +31,22 @@ void USActionComponent::BeginPlay()
 			AddAction(GetOwner(), ActionClass);
 		}
 	}
+}
+
+void USActionComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	// Make copy of Actions Array, iterate through it and stop any running Actions
+
+	TArray<USAction*> ActionsCopy = Actions;
+	for (USAction* Action : ActionsCopy)
+	{
+		if (Action && Action->IsRunning())
+		{
+			Action->StopAction(GetOwner());
+		}
+	}
+
+	Super::EndPlay(EndPlayReason);
 }
 
 // Called every frame
@@ -112,6 +131,8 @@ bool USActionComponent::ContainsAction(TSubclassOf<USAction> ActionClass)
 
 bool USActionComponent::StartActionByName(AActor* Instigator, FName ActionName)
 {
+	SCOPE_CYCLE_COUNTER(STAT_StartActionByName);
+
 	for (USAction* Action : Actions)
 	{
 		if (Action && Action->ActionName == ActionName)
@@ -128,6 +149,10 @@ bool USActionComponent::StartActionByName(AActor* Instigator, FName ActionName)
 			{
 				ServerStartAction(Instigator, ActionName);
 			}
+
+
+			// Add Bookmark for Unreal Insights Profiling
+			TRACE_BOOKMARK(TEXT("StartAction %s"), *GetNameSafe(Action));
 
 			Action->StartAction(Instigator);
 			return true;
