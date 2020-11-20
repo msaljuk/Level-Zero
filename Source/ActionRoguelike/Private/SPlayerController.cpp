@@ -32,18 +32,18 @@ void ASPlayerController::ServerRespawnPlayerFromId_Implementation(int32 TargetPl
 	for (FConstPlayerControllerIterator Iterator = GetWorld()->GetPlayerControllerIterator(); Iterator; ++Iterator)
 	{
 		APlayerController* PlayerController = Iterator->Get();
-		
+
 		if (PlayerController->PlayerState->GetPlayerId() == TargetPlayerId)
 		{
 			ASGameModeBase* GameMode = GetWorld()->GetAuthGameMode<ASGameModeBase>();
 			if (GameMode)
 			{
-				GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Blue, "Respawning...");
+				GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Blue, "Respawning Player " + PlayerController->PlayerState->GetPlayerName());
 
 				GameMode->RespawnPlayer(PlayerController);
-			}
 
-			break;
+				break;
+			}
 		}
 	}
 }

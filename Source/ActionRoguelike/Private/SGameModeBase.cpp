@@ -223,19 +223,22 @@ void ASGameModeBase::SpawnPlayerCredits(ASCharacter* Player)
 
 	if (PlayerState)
 	{
-		FVector SpawnLocation = Player->GetActorLocation();
-
-		AActor* DeadPlayerCredits = GetWorld()->SpawnActor<AActor>(PlayerCreditsPickup, SpawnLocation, FRotator::ZeroRotator);
-
-		if (DeadPlayerCredits)
+		if (PlayerState->PlayerCredits > 0)
 		{
-			ASCoin* CoinCredits = Cast<ASCoin>(DeadPlayerCredits);
+			FVector SpawnLocation = Player->GetActorLocation();
 
-			if (CoinCredits)
+			AActor* DeadPlayerCredits = GetWorld()->SpawnActor<AActor>(PlayerCreditsPickup, SpawnLocation, FRotator::ZeroRotator);
+
+			if (DeadPlayerCredits)
 			{
-				CoinCredits->SetCoinCredits(PlayerState->PlayerCredits);
+				ASCoin* CoinCredits = Cast<ASCoin>(DeadPlayerCredits);
 
-				CoinCredits->bShouldDestroyAfterFirstUse = true;
+				if (CoinCredits)
+				{
+					CoinCredits->SetCoinCredits(PlayerState->PlayerCredits);
+
+					CoinCredits->bShouldDestroyAfterFirstUse = true;
+				}
 			}
 		}
 	}
@@ -247,23 +250,25 @@ void ASGameModeBase::UpdateGamePlayers(ASCharacter* Player)
 
 	if (ensure(Controller))
 	{
-		Controller->UnPossess();
-
-		NumberOfAlivePlayers -= 1;
-
 		ASPlayerState* PlayerState = Controller->GetPlayerState<ASPlayerState>();
-		PlayerState->ServerToggleIsAlive();
-
-		FString DebugMsg = "Number of Alive Players: " + FString::FromInt(NumberOfAlivePlayers);
-		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Blue, DebugMsg);
-
-		if (NumberOfAlivePlayers <= 0)
+		if (ensure(PlayerState))
 		{
-			UGameplayStatics::OpenLevel(GetWorld(), "MainMenu_Entry", "?listen");
+			Controller->UnPossess();
+
+			NumberOfAlivePlayers -= 1;
+
+			PlayerState->ServerToggleIsAlive();
+
+			FString DebugMsg = "Number of Alive Players: " + FString::FromInt(NumberOfAlivePlayers);
+			GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Blue, DebugMsg);
+
+			if (NumberOfAlivePlayers <= 0)
+			{
+				UGameplayStatics::OpenLevel(GetWorld(), "MainMenu_Entry", "?listen");
+			}
 		}
 	}
 }
-
 
 void ASGameModeBase::GivePlayerKillCredits(ASCharacter* Player)
 {
@@ -278,10 +283,7 @@ void ASGameModeBase::RespawnPlayer_Implementation(AController* Controller)
 {
 	if (ensure(Controller))
 	{
-		while (Controller->GetPawn() == nullptr)
-		{
-			RestartPlayer(Controller);
-		}
+		RestartPlayer(Controller);
 
 		NumberOfAlivePlayers += 1;
 

@@ -32,9 +32,12 @@ void USActionEffect_RespawnPlayer::RespawnSelectedPlayer(AController* BuyingCont
 {
 	ASPlayerController* SPlayerController = Cast<ASPlayerController>(BuyingController);
 
-	if (SPlayerController)
+	if (ensure(BuyingController))
 	{
-		SPlayerController->ServerRespawnPlayerFromId(TargetPlayerState->GetPlayerId());
+		if (ensure(TargetPlayerState))
+		{
+			SPlayerController->ServerRespawnPlayerFromId(TargetPlayerState->GetPlayerId());
+		}
 	}
 
 	RespawnWidgetInstance->RemoveFromParent();
