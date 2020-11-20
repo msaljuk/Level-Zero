@@ -91,6 +91,9 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "Action")
 	TEnumAsByte<ItemType> ActionType;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Action")
+	FText ActionDescription;
+
 	bool IsSupportedForNetworking() const override
 	{
 		return true;

@@ -35,6 +35,9 @@ public:
 	TEnumAsByte<ItemType> BuyItemType;
 
 	UPROPERTY(BlueprintReadOnly)
+	FText BuyItemDescription;
+
+	UPROPERTY(BlueprintReadOnly)
 	TSubclassOf<USAction> BuyItemActionClass;
 
 	UPROPERTY(BlueprintReadOnly)

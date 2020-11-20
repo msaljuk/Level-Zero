@@ -41,18 +41,19 @@ void ASBuyStation::BeginPlay()
 					}
 				}
 
-				AddToBuyStation(NewAction->ActionName, NewAction->ActionType, ActionClass, NewAction->CreditsValue, ActionDuration);
+				AddToBuyStation(NewAction->ActionName, NewAction->ActionType, NewAction->ActionDescription, ActionClass, NewAction->CreditsValue, ActionDuration);
 			}
 		}
 	}
 }
 
-void ASBuyStation::AddToBuyStation(FName Name, TEnumAsByte<ItemType> Type, TSubclassOf<USAction> ActionClass, int Cost /*= 0*/, float Duration /*= -1.0f */, bool IsAlreadyPurchased /*= false*/)
+void ASBuyStation::AddToBuyStation(FName Name, TEnumAsByte<ItemType> Type, FText ItemDescription, TSubclassOf<USAction> ActionClass, int Cost /*= 0*/, float Duration /*= -1.0f */, bool IsAlreadyPurchased /*= false*/)
 {
 	USBuyStationItem* NewItem = NewObject<USBuyStationItem>(this);
 
 	NewItem->ItemName = Name;
 	NewItem->BuyItemType = Type;
+	NewItem->BuyItemDescription = ItemDescription;
 	NewItem->BuyItemActionClass = ActionClass;
 	NewItem->CreditsRequiredToPurchase = Cost;
 	NewItem->Duration = Duration;
