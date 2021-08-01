@@ -31,7 +31,7 @@ CS193U - Videogame Development in Unreal - Project
 - UI elements for player attributes and projected widgets for powerups and enemy health.
 - C++ Localized Text
 
-## Final Project
+## Final Independent Project
 
 For my final CS193U project, I've made the following additions/improvements:
 
