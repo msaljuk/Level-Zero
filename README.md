@@ -1,7 +1,7 @@
 # Level Zero - a 3rd person multiplayer ActionRoguelike
 CS193U - Videogame Development in Unreal - Project
 
-## Core Class Project Features
+## Core Class Project Features ([from CS193U Website](https://www.tomlooman.com/stanford-cs193u/))
 - Third-person Action Character Movement
 - Action System (similar to Gameplay Ability System in design)
   -  Dash Ability (Teleporting via projectile)
