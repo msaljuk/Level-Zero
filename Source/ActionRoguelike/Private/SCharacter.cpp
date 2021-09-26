@@ -38,6 +38,8 @@ ASCharacter::ASCharacter()
 	GetMesh()->SetGenerateOverlapEvents(true);
 
 	bUseControllerRotationYaw = false;
+
+	bIsCrouched = false;
 }
 
 void ASCharacter::PostInitializeComponents()

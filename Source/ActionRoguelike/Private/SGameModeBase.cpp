@@ -268,10 +268,10 @@ void ASGameModeBase::UpdateGamePlayers(ASCharacter* Player)
 			FString DebugMsg = "Number of Alive Players: " + FString::FromInt(NumberOfAlivePlayers);
 			GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Blue, DebugMsg);
 
-			if (NumberOfAlivePlayers <= 0)
-			{
-				UGameplayStatics::OpenLevel(GetWorld(), "MainMenu_Entry", "?listen");
-			}
+// 			if (NumberOfAlivePlayers <= 0)
+// 			{
+// 				UGameplayStatics::OpenLevel(GetWorld(), "MainMenu_Entry");
+// 			}
 		}
 	}
 }

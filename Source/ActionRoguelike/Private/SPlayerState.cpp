@@ -7,7 +7,7 @@
 
 ASPlayerState::ASPlayerState()
 {
-	PlayerCredits = 0;
+	PlayerCredits = 100;
 
 	MaximumPlayerCredits = 100;
 
