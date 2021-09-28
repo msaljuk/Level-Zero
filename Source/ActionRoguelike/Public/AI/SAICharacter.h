@@ -21,6 +21,9 @@ public:
 	// Sets default values for this character's properties
 	ASAICharacter();
 
+	UPROPERTY(EditAnywhere)
+	TArray<AActor*> PatrolPoints;
+
 protected:
 
 	USWorldUserWidget* ActiveHealthBar;
