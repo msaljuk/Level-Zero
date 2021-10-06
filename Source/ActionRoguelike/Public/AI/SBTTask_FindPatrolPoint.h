@@ -6,6 +6,8 @@
 #include "BehaviorTree/BTTaskNode.h"
 #include "SBTTask_FindPatrolPoint.generated.h"
 
+class ASAICharacter;
+
 /**
  *
  */
@@ -18,7 +20,9 @@ class ACTIONROGUELIKE_API USBTTask_FindPatrolPoint : public UBTTaskNode
 
 protected:
 
-	AActor* LastPatrolPoint;
+	AActor* CalculateNextPatrolPoint(ASAICharacter* AIPawn);
+
+	void UpdateBlackboardPatrolPoint(AActor* NextPatrolPoint, UBehaviorTreeComponent& OwnerComp);
 
 	UPROPERTY(EditAnywhere, Category = "AI")
 	FBlackboardKeySelector PatrolPointKey;

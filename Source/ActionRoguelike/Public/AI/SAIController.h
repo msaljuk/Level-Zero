@@ -16,11 +16,20 @@ class ACTIONROGUELIKE_API ASAIController : public AAIController
 {
 	GENERATED_BODY()
 	
+public:
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")
+	FVector HeardPlayerLocation;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")
+	float LastHeardTime;
+
+
 protected:
 
-	UPROPERTY(EditDefaultsOnly, Category = "AI")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")
 	UBehaviorTree* BehaviorTree;
-	
+
 	virtual void BeginPlay() override;
 
 	void InitializeBlackboardHealth();

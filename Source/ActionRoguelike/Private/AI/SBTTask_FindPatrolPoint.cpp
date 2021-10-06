@@ -5,6 +5,8 @@
 #include "BehaviorTree/BlackboardComponent.h"
 #include "AI/SAICharacter.h"
 
+const float SMALL_DELTA = 50.0f;
+
 EBTNodeResult::Type USBTTask_FindPatrolPoint::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
 
@@ -18,39 +20,53 @@ EBTNodeResult::Type USBTTask_FindPatrolPoint::ExecuteTask(UBehaviorTreeComponent
 			return EBTNodeResult::Failed;
 		}
 
-		TArray<AActor*> PatrolPoints = AIPawn->PatrolPoints;
-			 
-		if (PatrolPoints.Num() > 0)
+		AActor* NextPatrolPoint = CalculateNextPatrolPoint(AIPawn);
+		if (ensure(NextPatrolPoint))
 		{
-			// pick next patrol point at random
-			AActor* NextPatrolPoint = PatrolPoints[rand() % PatrolPoints.Num()];
-			
-			// confirm that AI is not already at patrol point
-			bool bIsNextPatrolPointConfirmed = false;
-			FVector PawnLocation = AIPawn->GetActorLocation();
-
-			while (!bIsNextPatrolPointConfirmed)
-			{
-				if (FVector::Dist(PawnLocation, NextPatrolPoint->GetActorLocation()) < 50.0f) {
-					NextPatrolPoint = PatrolPoints[rand() % PatrolPoints.Num()];
-				}
-				else
-				{
-					bIsNextPatrolPointConfirmed = true;
-				}
-			}
-
-			UBlackboardComponent* BlackboardComp = OwnerComp.GetBlackboardComponent();
-			if (ensure(BlackboardComp))
-			{
-				BlackboardComp->SetValueAsVector(PatrolPointKey.SelectedKeyName, NextPatrolPoint->GetActorLocation());
-			}
-
+			UpdateBlackboardPatrolPoint(NextPatrolPoint, OwnerComp);
 			return EBTNodeResult::Succeeded;
 		}
-
-		
 	}
 
 	return EBTNodeResult::Failed;
+}
+
+AActor* USBTTask_FindPatrolPoint::CalculateNextPatrolPoint(ASAICharacter* AIPawn)
+{
+	// retrieve list of marked patrol points for given NPC
+	TArray<AActor*> PatrolPoints = AIPawn->PatrolPoints;
+
+	if (PatrolPoints.Num() > 0)
+	{
+		// pick next patrol point at random
+		AActor* NextPatrolPoint = PatrolPoints[rand() % PatrolPoints.Num()];
+
+		// confirm that AI is not already at patrol point
+		bool bIsNextPatrolPointConfirmed = false;
+		FVector PawnLocation = AIPawn->GetActorLocation();
+
+		while (!bIsNextPatrolPointConfirmed)
+		{
+			if (FVector::Dist(PawnLocation, NextPatrolPoint->GetActorLocation()) < SMALL_DELTA) {
+				NextPatrolPoint = PatrolPoints[rand() % PatrolPoints.Num()];
+			}
+			else
+			{
+				bIsNextPatrolPointConfirmed = true;
+			}
+		}
+
+		return NextPatrolPoint;
+	}
+
+	return NULL;
+}
+
+void USBTTask_FindPatrolPoint::UpdateBlackboardPatrolPoint(AActor* NextPatrolPoint, UBehaviorTreeComponent& OwnerComp)
+{
+	UBlackboardComponent* BlackboardComp = OwnerComp.GetBlackboardComponent();
+	if (ensure(BlackboardComp))
+	{
+		BlackboardComp->SetValueAsVector(PatrolPointKey.SelectedKeyName, NextPatrolPoint->GetActorLocation());
+	}
 }

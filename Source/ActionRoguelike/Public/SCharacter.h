@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "GameplayTagContainer.h"
+#include "Perception/PawnSensingComponent.h"
 #include "SCharacter.generated.h"
 
 class UCameraComponent;
@@ -13,6 +14,7 @@ class USInteractionComponent;
 class UAnimMontage;
 class USAtttributeComponent;
 class USActionComponent;
+class UPawnNoiseEmitterComponent;
 
 UCLASS()
 class ACTIONROGUELIKE_API ASCharacter : public ACharacter
@@ -90,4 +92,12 @@ public:
 
 	UFUNCTION(Exec)
 	void HealSelf(float Amount = 100);
+
+	/*The function that is going to play the sound and report it to our game*/
+	UFUNCTION(BlueprintCallable, Category = AI)
+	void ReportNoise(USoundBase* SoundToPlay, float Volume);
+
+	/*A Pawn Noise Emitter component which is used in order to emit the sounds to nearby AIs*/
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	UPawnNoiseEmitterComponent* PawnNoiseEmitterComp;
 };

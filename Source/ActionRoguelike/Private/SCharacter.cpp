@@ -11,6 +11,8 @@
 #include "SAtttributeComponent.h"
 #include "SActionComponent.h"
 #include "SPlayerState.h"
+#include <Kismet/GameplayStatics.h>
+#include <Components/PawnNoiseEmitterComponent.h>
 
 // Sets default values
 ASCharacter::ASCharacter()
@@ -33,6 +35,8 @@ ASCharacter::ASCharacter()
 
 	ActionComp = CreateDefaultSubobject<USActionComponent>("ActionComp");
 
+	PawnNoiseEmitterComp = CreateDefaultSubobject<UPawnNoiseEmitterComponent>(TEXT("PawnNoiseEmitterComp"));
+
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 
 	GetMesh()->SetGenerateOverlapEvents(true);
@@ -41,6 +45,7 @@ ASCharacter::ASCharacter()
 
 	bIsCrouched = false;
 }
+
 
 void ASCharacter::PostInitializeComponents()
 {
@@ -156,6 +161,21 @@ void ASCharacter::PrimaryInteract()
 	if (InteractionComp)
 	{
 		InteractionComp->PrimaryInteract();
+	}
+}
+
+
+void ASCharacter::ReportNoise(USoundBase* SoundToPlay, float Volume)
+{
+	//If we have a valid sound to play, play the sound and
+	//report it to our game
+	if (SoundToPlay)
+	{
+		//Play the actual sound
+		UGameplayStatics::PlaySoundAtLocation(GetWorld(), SoundToPlay, GetActorLocation(), Volume);
+
+		//Report that we've played a sound with a certain volume in a specific location
+		MakeNoise(Volume, this, GetActorLocation());
 	}
 }
 
