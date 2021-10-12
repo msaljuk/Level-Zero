@@ -60,6 +60,8 @@ protected:
 
 	void Dash();
 
+	void ToggleCompanionMode();
+
 	void StartSprint();
 	void StopSprint();
 

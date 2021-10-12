@@ -13,6 +13,7 @@
 #include "SPlayerState.h"
 #include <Kismet/GameplayStatics.h>
 #include <Components/PawnNoiseEmitterComponent.h>
+#include "Companion AI/SCompanionAIController.h"
 
 // Sets default values
 ASCharacter::ASCharacter()
@@ -91,6 +92,8 @@ void ASCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 
 	PlayerInputComponent->BindAction("Dash", IE_Pressed, this, &ASCharacter::Dash);
 
+	PlayerInputComponent->BindAction("ToggleCompanionMode", IE_Pressed, this, &ASCharacter::ToggleCompanionMode);
+
 	PlayerInputComponent->BindAction("Sprint", IE_Pressed, this, &ASCharacter::StartSprint);
 	PlayerInputComponent->BindAction("Sprint", IE_Released, this, &ASCharacter::StopSprint);
 
@@ -144,6 +147,23 @@ void ASCharacter::SecondaryAttack()
 void ASCharacter::Dash()
 {
 	ActionComp->StartActionByName(this, "Dash");
+}
+
+void ASCharacter::ToggleCompanionMode()
+{
+	ASCompanionAIController* CompanionAIController = Cast<ASCompanionAIController>(UGameplayStatics::GetActorOfClass(GetWorld(), ASCompanionAIController::StaticClass()));
+	if (ensure(CompanionAIController))
+	{
+		Mode CompanionAIMode = CompanionAIController->GetCompanionAIMode();
+		if (CompanionAIMode == Hide)
+		{
+			CompanionAIController->SetCompanionAIMode(Follow);
+		} 
+		else
+		{
+			CompanionAIController->SetCompanionAIMode(Hide);
+		}
+	}
 }
 
 void ASCharacter::StartSprint()
