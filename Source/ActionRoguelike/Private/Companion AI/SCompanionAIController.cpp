@@ -4,12 +4,14 @@
 #include "Companion AI/SCompanionAIController.h"
 #include "BehaviorTree/BlackboardComponent.h"
 
+ASCompanionAIController::ASCompanionAIController()
+{
+	SetCompanionAIMode(Follow);
+}
+
 void ASCompanionAIController::BeginPlay()
 {
 	Super::BeginPlay();
-
-	// Companion set to follow player at startup
-	mode = Mode::Follow;
 
 	if (ensureMsgf(BehaviorTree, TEXT("BehaviorTree is nullptr. Please assign BehaviorTree in AIController")))
 	{

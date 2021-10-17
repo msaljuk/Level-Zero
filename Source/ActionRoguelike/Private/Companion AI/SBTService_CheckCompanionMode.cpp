@@ -9,8 +9,6 @@ void USBTService_CheckCompanionMode::TickNode(UBehaviorTreeComponent& OwnerComp,
 {
 	Super::TickNode(OwnerComp, NodeMemory, DeltaSeconds);
 
-
-
 	UBlackboardComponent* BlackboardComp = OwnerComp.GetBlackboardComponent();
 
 	if (ensure(BlackboardComp))

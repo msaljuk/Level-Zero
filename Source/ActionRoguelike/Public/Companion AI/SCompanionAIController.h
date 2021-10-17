@@ -27,6 +27,8 @@ class ACTIONROGUELIKE_API ASCompanionAIController : public AAIController
 
 public:
 
+	ASCompanionAIController();
+
 	UPROPERTY(BlueprintAssignable)
 	FOnModeChanged OnModeChanged;
 

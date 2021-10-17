@@ -53,7 +53,18 @@ Plugins/*/Binaries/*
 Build/*
 
 # Content Assets
-Content/*
+Content/Collections/*
+Content/Developers/*
+Content/Effects/*
+Content/Enemy_Great_Spider/*
+Content/ExampleContent/*
+Content/Maps/*
+Content/Meshes/*
+Content/ParagonGideon/*
+Content/ParagonMinions/*
+Content/SFX/*
+Content/STF/*
+Content/UI/*
 
 # Whitelist PakBlacklist-<BuildConfiguration>.txt files
 !Build/*/
