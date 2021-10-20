@@ -22,7 +22,7 @@ void USBTService_CheckPlayerHeard::TickNode(UBehaviorTreeComponent& OwnerComp, u
 			
 			if (!MyController->HeardPlayerLocation.IsZero())
 			{
-				if (MyController->LastHeardTime - GetWorld()->GetTimeSeconds() < LAST_HEARD_DELTA)
+				if (GetWorld()->GetTimeSeconds() - MyController->LastHeardTime < LAST_HEARD_DELTA)
 				{
 					BlackboardComp->SetValueAsBool(PlayerHeardKey.SelectedKeyName, true);
 					BlackboardComp->SetValueAsVector(PlayerHeardLocationKey.SelectedKeyName, MyController->HeardPlayerLocation);
@@ -30,7 +30,7 @@ void USBTService_CheckPlayerHeard::TickNode(UBehaviorTreeComponent& OwnerComp, u
 					return;
 				}
 			}
-			
+
 			BlackboardComp->SetValueAsBool(PlayerHeardKey.SelectedKeyName, false);
 		}
 	}
