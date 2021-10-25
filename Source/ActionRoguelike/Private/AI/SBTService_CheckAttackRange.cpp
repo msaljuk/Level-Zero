@@ -4,20 +4,21 @@
 #include "AI/SBTService_CheckAttackRange.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "AIController.h"
+#include "SCharacter.h"
+#include "Companion AI/SCompanionAIController.h"
 
 void USBTService_CheckAttackRange::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
 {
 	Super::TickNode(OwnerComp, NodeMemory, DeltaSeconds);
 
 	// Check distance between AIPlayer and Player
-
 	UBlackboardComponent* BlackboardComp = OwnerComp.GetBlackboardComponent();
 
 	if (ensure(BlackboardComp))
 	{
-		AActor* TargetActor = Cast<AActor>(BlackboardComp->GetValueAsObject("TargetActor"));
+		ASCharacter* TargetCharacter = Cast<ASCharacter>(BlackboardComp->GetValueAsObject("TargetActor"));
 
-		if (TargetActor)
+		if (TargetCharacter)
 		{
 			AAIController* MyController = OwnerComp.GetAIOwner();
 
@@ -26,17 +27,31 @@ void USBTService_CheckAttackRange::TickNode(UBehaviorTreeComponent& OwnerComp, u
 				APawn* AIPawn = MyController->GetPawn();
 				if (ensure(AIPawn))
 				{
-					float DistanceTo = FVector::Distance(TargetActor->GetActorLocation(), AIPawn->GetActorLocation());
+					float DistanceTo = FVector::Distance(TargetCharacter->GetActorLocation(), AIPawn->GetActorLocation());
 
 					bool bWithinRange = DistanceTo < 1000.0f;
 
-					bool bHasLineOfSight = false;
 					if (bWithinRange)
 					{
-						bHasLineOfSight = MyController->LineOfSightTo(TargetActor);
+						bool bHasLineOfSight = MyController->LineOfSightTo(TargetCharacter);
+
+						if (bHasLineOfSight)
+						{
+							if (TargetCharacter->bIsCompanion)
+							{
+								BlackboardComp->SetValueAsBool(CompanionSeenKey.SelectedKeyName, true);
+							}
+							else
+							{
+								BlackboardComp->SetValueAsBool(PlayerSeenKey.SelectedKeyName, true);
+							}
+
+							return;
+						}
 					}
 
-					BlackboardComp->SetValueAsBool(AttackRangeKey.SelectedKeyName, bWithinRange && bHasLineOfSight);
+					BlackboardComp->SetValueAsBool(PlayerSeenKey.SelectedKeyName, false);
+					BlackboardComp->SetValueAsBool(CompanionSeenKey.SelectedKeyName, false);
 				}
 			}
 		}

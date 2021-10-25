@@ -102,4 +102,10 @@ public:
 	/*A Pawn Noise Emitter component which is used in order to emit the sounds to nearby AIs*/
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	UPawnNoiseEmitterComponent* PawnNoiseEmitterComp;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bIsObstructed;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bIsCompanion;
 };

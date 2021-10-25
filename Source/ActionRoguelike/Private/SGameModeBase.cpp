@@ -35,6 +35,8 @@ ASGameModeBase::ASGameModeBase()
 	SlotName = "SaveGame01";
 
 	NumberOfAlivePlayers = 0;
+
+	GameAlertLevel = None;
 }
 
 void ASGameModeBase::InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage)
@@ -390,4 +392,16 @@ void ASGameModeBase::LoadSaveGame()
 
 		UE_LOG(LogTemp, Log, TEXT("Created new SaveGame Data"));
 	}
+}
+
+AlertLevel ASGameModeBase::GetGameAlertLevel()
+{
+	return GameAlertLevel;
+}
+
+AlertLevel ASGameModeBase::SetGameAlertLevel(AlertLevel NewAlertLevel)
+{
+	GameAlertLevel = NewAlertLevel;
+	OnAlertLevelChanged.Broadcast(this, GameAlertLevel);
+	return GameAlertLevel;
 }

@@ -3,7 +3,6 @@
 
 #include "AI/SAICharacter.h"
 #include "Perception/PawnSensingComponent.h"
-#include "AIController.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "DrawDebugHelpers.h"
 #include "SAtttributeComponent.h"
@@ -12,6 +11,8 @@
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "SActionComponent.h"
+#include "SCharacter.h"
+#include "AI/SAIController.h"
 
 // Sets default values
 ASAICharacter::ASAICharacter()
@@ -87,12 +88,47 @@ void ASAICharacter::OnHealthChanged(AActor* InstigatorActor, USAtttributeCompone
 
 void ASAICharacter::OnPawnSeen(APawn* Pawn)
 {
-    SetTargetActor(Pawn);
+    ASAICharacter* EnemyPawn = Cast<ASAICharacter>(Pawn);
+    if (EnemyPawn)
+    {
+        return;
+    }
+
+    ASCharacter* CharacterPawn = Cast<ASCharacter>(Pawn);
+    if (CharacterPawn)
+    {
+        if (CharacterPawn->bIsObstructed)
+        {
+            float DistanceTo = FVector::Distance(CharacterPawn->GetActorLocation(), GetActorLocation());
+            if (DistanceTo < 500.0f)
+            {
+                SetTargetActor(Pawn);
+                GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Blue, "Character obstructed but close enough to be seen");
+            }
+            else
+            {
+                GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Red, "Character obstructed and not close enough to be seen");
+            }
+        } 
+        else
+        {
+			ASAIController *AIController = Cast<ASAIController>(GetController());
+            if (AIController)
+            {
+                AIController->HeardPlayerLocation = CharacterPawn->GetActorLocation();
+                AIController->LastHeardTime = GetWorld()->GetTimeSeconds();
+
+                GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Green, "Updating player location");
+            }
+            SetTargetActor(Pawn);
+            GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Blue, "Character seen");
+        }
+    }
 }
 
 void ASAICharacter::SetTargetActor(AActor* NewActor)
 {
-	AAIController* AIController = Cast<AAIController>(GetController());
+	ASAIController* AIController = Cast<ASAIController>(GetController());
 
     if (AIController)
     {

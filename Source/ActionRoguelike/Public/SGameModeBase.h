@@ -15,6 +15,16 @@ class ASCharacter;
 class USSaveGame;
 class USMonsterData;
 
+UENUM(BlueprintType)
+enum AlertLevel
+{
+	None      UMETA(DisplayName = "None"),
+	Caution   UMETA(DisplayName = "Caution"),
+	Max		  UMETA(DisplayName = "Max")
+};
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnAlertLevelChanged, ASGameModeBase*, GameModeBase, AlertLevel, GameAlertLevel);
+
 USTRUCT(BlueprintType)
 struct FMonsterInfoRow : public FTableRowBase
 {
@@ -89,6 +99,8 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "AI")
 	UCurveFloat* DifficultyCurve;
 
+	AlertLevel GameAlertLevel;
+
 	UFUNCTION()
 	void OnQueryCompleted(UEnvQueryInstanceBlueprintWrapper* QueryInstance, EEnvQueryStatus::Type QueryStatus);
 
@@ -125,4 +137,13 @@ public:
 
 	UPROPERTY(BlueprintReadOnly)
 	float NumberOfAlivePlayers;
+
+	UFUNCTION(BlueprintCallable)
+	AlertLevel GetGameAlertLevel();
+
+	UFUNCTION(BlueprintCallable)
+	AlertLevel SetGameAlertLevel(AlertLevel NewAlertLevel);
+
+	UPROPERTY(BlueprintAssignable)
+	FOnAlertLevelChanged OnAlertLevelChanged;
 };

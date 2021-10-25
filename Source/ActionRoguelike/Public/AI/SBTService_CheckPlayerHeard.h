@@ -17,11 +17,17 @@ class ACTIONROGUELIKE_API USBTService_CheckPlayerHeard : public UBTService
 protected:
 
 	UPROPERTY(EditAnywhere, Category = "AI")
+	FBlackboardKeySelector PreviousPlayerHeardKey;
+
+	UPROPERTY(EditAnywhere, Category = "AI")
 	FBlackboardKeySelector PlayerHeardKey;
 	
 	UPROPERTY(EditAnywhere, Category = "AI")
 	FBlackboardKeySelector PlayerHeardLocationKey;
 
+
+	UPROPERTY(EditAnywhere, Category = "AI")
+	FBlackboardKeySelector RevertToNoAlertModeKey;
 
 	virtual void TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;
 	
