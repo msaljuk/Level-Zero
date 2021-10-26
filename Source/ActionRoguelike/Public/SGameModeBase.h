@@ -20,7 +20,7 @@ enum AlertLevel
 {
 	None      UMETA(DisplayName = "None"),
 	Caution   UMETA(DisplayName = "Caution"),
-	Max		  UMETA(DisplayName = "Max")
+	Search		  UMETA(DisplayName = "Search")
 };
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnAlertLevelChanged, ASGameModeBase*, GameModeBase, AlertLevel, GameAlertLevel);
@@ -52,7 +52,7 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	float KillReward;
-	
+
 };
 
 /**
@@ -146,4 +146,7 @@ public:
 
 	UPROPERTY(BlueprintAssignable)
 	FOnAlertLevelChanged OnAlertLevelChanged;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level")
+	UObject* CoverPointAPI;
 };
