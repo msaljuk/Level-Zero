@@ -45,6 +45,8 @@ protected:
 	UPROPERTY(VisibleAnywhere, Category = "Components")
 	UPawnSensingComponent* PawnSensingComp;
 
+	bool IsSeenPawnObstructed(APawn* Pawn);
+
 	UFUNCTION()
 	void OnHealthChanged(AActor* InstigatorActor, USAtttributeComponent* OwningComp, float NewHealth, float Delta);
 

@@ -94,41 +94,37 @@ void ASAICharacter::OnPawnSeen(APawn* Pawn)
         return;
     }
 
-    ASCharacter* CharacterPawn = Cast<ASCharacter>(Pawn);
-    if (CharacterPawn)
-    {
-        if (CharacterPawn->bIsObstructed)
-        {
-            float DistanceTo = FVector::Distance(CharacterPawn->GetActorLocation(), GetActorLocation());
-            if (DistanceTo < 500.0f)
-            {
-                SetTargetActor(Pawn);
-                GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Blue, "Character obstructed but close enough to be seen");
-            }
-            else
-            {
-                GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Red, "Character obstructed and not close enough to be seen");
-            }
-        } 
-        else
-        {
-			ASAIController *AIController = Cast<ASAIController>(GetController());
-            if (AIController)
-            {
-                AIController->HeardPlayerLocation = CharacterPawn->GetActorLocation();
-                AIController->LastHeardTime = GetWorld()->GetTimeSeconds();
+	if (IsSeenPawnObstructed(Pawn))
+	{
+		float DistanceTo = FVector::Distance(Pawn->GetActorLocation(), GetActorLocation());
+		if (DistanceTo < 750.0f)
+		{
+			SetTargetActor(Pawn);
+			// GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Blue, "Character obstructed but close enough to be seen");
+		}
+		else
+		{
+			// GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Red, "Character obstructed and not close enough to be seen");
+		}
+	}
+	else
+	{
+		ASAIController* AIController = Cast<ASAIController>(GetController());
+		if (AIController)
+		{
+			AIController->HeardPlayerLocation = Pawn->GetActorLocation();
+			AIController->LastHeardTime = GetWorld()->GetTimeSeconds();
 
-                GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Green, "Updating player location");
-            }
-            SetTargetActor(Pawn);
-            GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Blue, "Character seen");
-        }
-    }
+			// GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Green, "Updating player location");
+		}
+		SetTargetActor(Pawn);
+		// GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Blue, "Character seen");
+	}
 }
 
 void ASAICharacter::SetTargetActor(AActor* NewActor)
 {
-	ASAIController* AIController = Cast<ASAIController>(GetController());
+    ASAIController* AIController = Cast<ASAIController>(GetController());
 
     if (AIController)
     {
@@ -136,4 +132,44 @@ void ASAICharacter::SetTargetActor(AActor* NewActor)
 
         BlackboardComp->SetValueAsObject("TargetActor", NewActor);
     }
+}
+
+bool ASAICharacter::IsSeenPawnObstructed(APawn* Pawn)
+{
+    ASCharacter* CharacterPawn = Cast<ASCharacter>(Pawn);
+    if (ensure(CharacterPawn))
+    {
+		AActor* MyOwner = GetOwner();
+
+		FVector EyeLocation;
+		FRotator EyeRotation;
+		MyOwner->GetActorEyesViewPoint(EyeLocation, EyeRotation);
+
+		FVector TargetLocation = Pawn->GetActorLocation();
+
+		FCollisionObjectQueryParams ObjectQueryParams;
+		ObjectQueryParams.AddObjectTypesToQuery(ECC_WorldDynamic);
+		ObjectQueryParams.AddObjectTypesToQuery(ECC_WorldStatic);
+		ObjectQueryParams.AddObjectTypesToQuery(ECC_Vehicle);
+		ObjectQueryParams.AddObjectTypesToQuery(ECC_PhysicsBody);
+
+		FHitResult Hit;
+		GetWorld()->LineTraceSingleByObjectType(Hit, EyeLocation, TargetLocation, ObjectQueryParams);
+
+		if (Hit.GetActor())
+		{
+			if (Hit.GetActor()->GetName().Contains("InstancedFoliageActor"))
+			{
+// 				FString Message = "Saw " + Pawn->GetName() + " but they are behind " + Hit.GetActor()->GetName();
+// 				GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Green, Message);
+				return true;
+			}
+		}
+
+        CharacterPawn->bIsObstructed = false;
+
+		return false;
+    }
+
+    return false;
 }
