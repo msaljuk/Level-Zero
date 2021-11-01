@@ -108,4 +108,7 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bIsCompanion;
+
+	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
+	void Distract(ASAIController* EnemyController);
 };

@@ -94,32 +94,31 @@ void ASAICharacter::OnPawnSeen(APawn* Pawn)
         return;
     }
 
-	if (IsSeenPawnObstructed(Pawn))
-	{
-		float DistanceTo = FVector::Distance(Pawn->GetActorLocation(), GetActorLocation());
-		if (DistanceTo < 750.0f)
-		{
-			SetTargetActor(Pawn);
-			// GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Blue, "Character obstructed but close enough to be seen");
-		}
-		else
-		{
-			// GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Red, "Character obstructed and not close enough to be seen");
-		}
-	}
-	else
-	{
-		ASAIController* AIController = Cast<ASAIController>(GetController());
-		if (AIController)
+    float DistanceTo = FVector::Distance(Pawn->GetActorLocation(), GetActorLocation());
+
+	ASAIController* AIController = Cast<ASAIController>(GetController());
+    if (AIController)
+    {
+		if (!IsSeenPawnObstructed(Pawn) || DistanceTo < 750.0f)
 		{
 			AIController->HeardPlayerLocation = Pawn->GetActorLocation();
 			AIController->LastHeardTime = GetWorld()->GetTimeSeconds();
 
+			SetTargetActor(Pawn);
 			// GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Green, "Updating player location");
-		}
-		SetTargetActor(Pawn);
-		// GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Blue, "Character seen");
-	}
+
+			// GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Blue, "Character seen");
+        }
+
+        if (DistanceTo < 1500.0f)
+        {
+			ASCharacter* DetectableCharacter = Cast<ASCharacter>(Pawn);
+			if (DetectableCharacter)
+			{
+				AIController->SetCharacterAboutToBeDetected(DetectableCharacter);
+			}
+        }
+    }
 }
 
 void ASAICharacter::SetTargetActor(AActor* NewActor)

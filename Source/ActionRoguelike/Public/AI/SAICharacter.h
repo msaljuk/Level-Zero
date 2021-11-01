@@ -54,4 +54,5 @@ protected:
 	void OnPawnSeen(APawn* Pawn);
 
 	void SetTargetActor(AActor* NewActor);
+
 };

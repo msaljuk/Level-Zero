@@ -6,6 +6,7 @@
 #include "BehaviorTree/BlackboardComponent.h"
 #include "AI/SAICharacter.h"
 #include "SAtttributeComponent.h"
+#include "SCharacter.h"
 
 void ASAIController::BeginPlay()
 {
@@ -16,3 +17,9 @@ void ASAIController::BeginPlay()
 		RunBehaviorTree(BehaviorTree);
 	}
 }
+
+void ASAIController::SetCharacterAboutToBeDetected(ASCharacter* DetectableCharacter)
+{
+	OnCharacterAboutToBeDetected.Broadcast(this, DetectableCharacter);
+}
+

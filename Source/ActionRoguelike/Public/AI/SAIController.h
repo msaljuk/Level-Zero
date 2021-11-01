@@ -8,6 +8,8 @@
 
 class UBehaviorTree;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnCharacterAboutToBeDetected, ASAIController*, EnemyController, ASCharacter*, Character);
+
 /**
  * 
  */
@@ -24,6 +26,11 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")
 	float LastHeardTime;
 
+	UPROPERTY(BlueprintAssignable)
+	FOnCharacterAboutToBeDetected OnCharacterAboutToBeDetected;
+
+	void SetCharacterAboutToBeDetected(ASCharacter* DetectableCharacter);
+
 
 protected:
 
@@ -33,4 +40,5 @@ protected:
 	virtual void BeginPlay() override;
 
 	void InitializeBlackboardHealth();
+
 };

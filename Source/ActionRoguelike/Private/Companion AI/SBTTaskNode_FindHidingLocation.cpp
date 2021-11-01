@@ -54,7 +54,7 @@ void USBTTaskNode_FindHidingLocation::SortCoverPointsByActorDistance(TArray<AAct
 		float DistanceToRHCoverPoint = FVector::DistSquared(SourceLocation, RHCoverPoint.GetActorLocation());
 
 		return DistanceToLHCoverPoint < DistanceToRHCoverPoint;
-		});
+	});
 }
 
 bool USBTTaskNode_FindHidingLocation::IsValidCoverPoint(AActor* CoverPoint)
