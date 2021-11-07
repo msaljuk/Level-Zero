@@ -138,6 +138,11 @@ bool ASAICharacter::IsSeenPawnObstructed(APawn* Pawn)
     ASCharacter* CharacterPawn = Cast<ASCharacter>(Pawn);
     if (ensure(CharacterPawn))
     {
+        if (!CharacterPawn->bIsCrouched && !CharacterPawn->bIsCompanion)
+        {
+            return false;
+        }
+
 		AActor* MyOwner = GetOwner();
 
 		FVector EyeLocation;

@@ -30,6 +30,10 @@ void USBTService_CheckAttackRange::TickNode(UBehaviorTreeComponent& OwnerComp, u
 					float DistanceTo = FVector::Distance(TargetCharacter->GetActorLocation(), AIPawn->GetActorLocation());
 
 					bool bWithinRange = DistanceTo < 1000.0f;
+					if (!TargetCharacter->bIsCrouched && !TargetCharacter->bIsCompanion)
+					{
+						bWithinRange = DistanceTo < 2500.0f;
+					}
 
 					if (bWithinRange)
 					{
