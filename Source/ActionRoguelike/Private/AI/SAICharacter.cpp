@@ -101,10 +101,13 @@ void ASAICharacter::OnPawnSeen(APawn* Pawn)
     {
 		if (!IsSeenPawnObstructed(Pawn) || DistanceTo < 750.0f)
 		{
-			AIController->HeardPlayerLocation = Pawn->GetActorLocation();
-			AIController->LastHeardTime = GetWorld()->GetTimeSeconds();
+            if (!Pawn->IsPendingKill())
+            {
+				AIController->HeardPlayerLocation = Pawn->GetActorLocation();
+				AIController->LastHeardTime = GetWorld()->GetTimeSeconds();
 
-			SetTargetActor(Pawn);
+				SetTargetActor(Pawn);
+            }
 			// GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Green, "Updating player location");
 
 			// GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Blue, "Character seen");
