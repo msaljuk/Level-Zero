@@ -110,14 +110,19 @@ void ASAICharacter::OnPawnSeen(APawn* Pawn)
 			// GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Blue, "Character seen");
         }
 
-        if (DistanceTo < 1500.0f)
-        {
-			ASCharacter* DetectableCharacter = Cast<ASCharacter>(Pawn);
-			if (DetectableCharacter)
+		ASCharacter* DetectableCharacter = Cast<ASCharacter>(Pawn);
+		if (DetectableCharacter)
+		{
+			if (DistanceTo < 1500.0f)
 			{
 				AIController->SetCharacterAboutToBeDetected(DetectableCharacter);
+                DetectableCharacter->bIsFeelingSafe = false;
 			}
-        }
+			else
+			{
+				DetectableCharacter->bIsFeelingSafe = true;
+			}
+		}
     }
 }
 
@@ -138,11 +143,6 @@ bool ASAICharacter::IsSeenPawnObstructed(APawn* Pawn)
     ASCharacter* CharacterPawn = Cast<ASCharacter>(Pawn);
     if (ensure(CharacterPawn))
     {
-        if (!CharacterPawn->bIsCrouched && !CharacterPawn->bIsCompanion)
-        {
-            return false;
-        }
-
 		AActor* MyOwner = GetOwner();
 
 		FVector EyeLocation;
@@ -164,6 +164,13 @@ bool ASAICharacter::IsSeenPawnObstructed(APawn* Pawn)
 		{
 			if (Hit.GetActor()->GetName().Contains("InstancedFoliageActor"))
 			{
+				if (!CharacterPawn->bIsCrouched && !CharacterPawn->bIsCompanion)
+				{
+                    CharacterPawn->bIsObstructed = false;
+					return false;
+				}
+
+                CharacterPawn->bIsObstructed = true;
 // 				FString Message = "Saw " + Pawn->GetName() + " but they are behind " + Hit.GetActor()->GetName();
 // 				GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Green, Message);
 				return true;

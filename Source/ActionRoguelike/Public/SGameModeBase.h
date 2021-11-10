@@ -21,6 +21,7 @@ enum AlertLevel
 	None      UMETA(DisplayName = "None"),
 	Caution   UMETA(DisplayName = "Caution"),
 	Search	  UMETA(DisplayName = "Search"),
+	Alert	  UMETA(DisplayName = "Alert")
 };
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnAlertLevelChanged, ASGameModeBase*, GameModeBase, AlertLevel, GameAlertLevel);

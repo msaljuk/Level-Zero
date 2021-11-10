@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+	// Fill out your copyright notice in the Description page of Project Settings.
 
 #include "SMagicProjectile.h"
 #include "Components/SphereComponent.h"
@@ -12,6 +12,9 @@
 #include "SGameplayFunctionLibrary.h"
 #include "SActionComponent.h"
 #include "SActionEffect.h"
+#include "AI/SAIController.h"
+#include "SCharacter.h"
+#include "AI/SAICharacter.h"
 
 // Sets default values
 ASMagicProjectile::ASMagicProjectile()
@@ -66,51 +69,58 @@ void ASMagicProjectile::OnActorOverlap(UPrimitiveComponent* OverlappedComponent,
 {
 	if (OtherActor && OtherActor != GetInstigator())
 	{
-		USAtttributeComponent* AttributeComp = Cast<USAtttributeComponent>(OtherActor->GetComponentByClass(USAtttributeComponent::StaticClass()));
-
-		USActionComponent* ActionComp = Cast<USActionComponent>(OtherActor->GetComponentByClass(USActionComponent::StaticClass()));
-		if (ActionComp && ActionComp->ActiveGameplayTags.HasTag(ParryTag))
+		if (OtherActor->GetName().Contains("InstancedFoliageActor"))
 		{
-			MovementComp->Velocity = -MovementComp->Velocity;
-
-			SetInstigator(Cast<APawn>(OtherActor));
 			return;
 		}
 
-// 		if (ActionComp && HasAuthority())
+		Explode();
+
+// 		USAtttributeComponent* AttributeComp = Cast<USAtttributeComponent>(OtherActor->GetComponentByClass(USAtttributeComponent::StaticClass()));
+// 
+// 		USActionComponent* ActionComp = Cast<USActionComponent>(OtherActor->GetComponentByClass(USActionComponent::StaticClass()));
+// 		if (ActionComp && ActionComp->ActiveGameplayTags.HasTag(ParryTag))
 // 		{
-// 			if (ThornActionEffect)
-// 			{
-// 				ActionComp->AddAction(GetInstigator(), ThornActionEffect);
-// 			}
+// 			MovementComp->Velocity = -MovementComp->Velocity;
+// 
+// 			SetInstigator(Cast<APawn>(OtherActor));
+// 			return;
 // 		}
-
-		// Double Projectile Damage Value if Double Damage Buff Present For Instigator
-		USActionComponent* InstigatorActionComp = Cast<USActionComponent>(GetInstigator()->GetComponentByClass(USActionComponent::StaticClass()));
-
-		if (InstigatorActionComp && HasAuthority())
-		{	
-			if (InstigatorActionComp->ContainsAction(DoubleDamageActionEffect))
-			{
-				ProjectileDamage *= 2;
-			} 
-		}
+// 
+// // 		if (ActionComp && HasAuthority())
+// // 		{
+// // 			if (ThornActionEffect)
+// // 			{
+// // 				ActionComp->AddAction(GetInstigator(), ThornActionEffect);
+// // 			}
+// // 		}
+// 
+// 		// Double Projectile Damage Value if Double Damage Buff Present For Instigator
+// 		USActionComponent* InstigatorActionComp = Cast<USActionComponent>(GetInstigator()->GetComponentByClass(USActionComponent::StaticClass()));
+// 
+// 		if (InstigatorActionComp && HasAuthority())
+// 		{	
+// 			if (InstigatorActionComp->ContainsAction(DoubleDamageActionEffect))
+// 			{
+// 				ProjectileDamage *= 2;
+// 			} 
+// 		}
 		
 
 		// Apply Damage and Impulse
-		if (USGameplayFunctionLibrary::ApplyDirectionalDamage(GetInstigator(), OtherActor, ProjectileDamage, SweepResult))
-		{
-			Explode();
-
-			// Apply Burning Buff (If Present)
-			if (ActionComp && HasAuthority())
-			{
-				if (BurningActionEffect)
-				{
-					ActionComp->AddAction(GetInstigator(), BurningActionEffect);
-				}
-			}
-		}
+// 		if (USGameplayFunctionLibrary::ApplyDirectionalDamage(GetInstigator(), OtherActor, ProjectileDamage, SweepResult))
+// 		{
+//			Explode();
+// 
+// 			// Apply Burning Buff (If Present)
+// 			if (ActionComp && HasAuthority())
+// 			{
+// 				if (BurningActionEffect)
+// 				{
+// 					ActionComp->AddAction(GetInstigator(), BurningActionEffect);
+// 				}
+// 			}
+/*		}*/
 
 	}
 }
@@ -119,6 +129,11 @@ void ASMagicProjectile::OnActorHit(UPrimitiveComponent* HitComponent, AActor* Ot
 {
 	if (OtherActor)
 	{
+		if (OtherActor->GetName().Contains("InstancedFoliageActor"))
+		{
+			return;
+		}
+
 		Explode();
 	}
 }
@@ -130,6 +145,26 @@ void ASMagicProjectile::Explode()
 	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ImpactVFX, GetActorLocation());
 
 	UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation());
+
+	APawn* OwnerPawn = GetInstigator();
+
+	ASCharacter* OwnerCharacter = Cast<ASCharacter>(OwnerPawn);
+	if (OwnerCharacter)
+	{
+		MakeNoise(1.0f, OwnerPawn, GetActorLocation());
+	} 
+	else {
+		ASAICharacter* EnemyCharacter = Cast<ASAICharacter>(OwnerPawn);
+		if (EnemyCharacter)
+		{
+			UGameplayStatics::PlaySoundAtLocation(GetWorld(), BeingAttackedSound, GetActorLocation());
+		}
+	}
+	// Debug
+// 	FActorSpawnParameters SpawnParams;
+// 	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+// 	SpawnParams.Instigator = OwnerPawn;
+// 	GetWorld()->SpawnActor<AActor>(DebugProjectileClass, FTransform(GetActorLocation()), SpawnParams);
 
 	Destroy();
 }

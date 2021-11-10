@@ -28,6 +28,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Damage")
 	TSubclassOf<USActionEffect> BurningActionEffect;
 
+	UPROPERTY(EditAnywhere, Category = "Attack")
+	TSubclassOf<AActor> DebugProjectileClass;
+
 	UPROPERTY(EditDefaultsOnly, Category = "Damage")
 	TSubclassOf<USActionEffect> ThornActionEffect;
 
@@ -54,6 +57,9 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Sound")
 	USoundCue* ImpactSound;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Sound")
+	USoundCue* BeingAttackedSound;
 
 	FTimerHandle TimerHandle_ProjectileExplosionDelay;
 

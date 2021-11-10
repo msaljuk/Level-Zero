@@ -38,7 +38,6 @@ public:
 	UFUNCTION(BlueprintCallable)
 	Mode SetCompanionAIMode(Mode newMode);
 
-
 protected:
 
 	UPROPERTY(EditDefaultsOnly, Category = "AI")
