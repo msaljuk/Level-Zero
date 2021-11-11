@@ -401,7 +401,11 @@ AlertLevel ASGameModeBase::GetGameAlertLevel()
 
 AlertLevel ASGameModeBase::SetGameAlertLevel(AlertLevel NewAlertLevel)
 {
-	GameAlertLevel = NewAlertLevel;
-	OnAlertLevelChanged.Broadcast(this, GameAlertLevel);
+	if (GameAlertLevel != NewAlertLevel)
+	{
+		GameAlertLevel = NewAlertLevel;
+		OnAlertLevelChanged.Broadcast(this, GameAlertLevel);
+	}
+
 	return GameAlertLevel;
 }

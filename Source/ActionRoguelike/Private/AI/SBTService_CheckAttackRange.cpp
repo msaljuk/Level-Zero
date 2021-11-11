@@ -32,7 +32,7 @@ void USBTService_CheckAttackRange::TickNode(UBehaviorTreeComponent& OwnerComp, u
 					bool bWithinRange = DistanceTo < 1000.0f;
 					if (!TargetCharacter->bIsObstructed && !TargetCharacter->bIsCompanion)
 					{
-						bWithinRange = DistanceTo < 1500.0f;
+						bWithinRange = DistanceTo < 2500.0f;
 					}
 
 					if (bWithinRange)
