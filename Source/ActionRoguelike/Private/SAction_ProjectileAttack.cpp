@@ -65,26 +65,26 @@ FTransform USAction_ProjectileAttack::GetProjectileSpawnTM(ACharacter* Instigato
 		FVector CameraLocation = Instigator->GetPawnViewLocation();
 		FRotator CameraRotation = Instigator->GetPawnViewRotation();
 
-		FVector WorldEnd = CameraLocation + (CameraRotation.Vector() * 2500);
-
-		FCollisionObjectQueryParams ObjectQueryParams;
-		ObjectQueryParams.AddObjectTypesToQuery(ECC_WorldDynamic);
-		ObjectQueryParams.AddObjectTypesToQuery(ECC_WorldStatic);
-		ObjectQueryParams.AddObjectTypesToQuery(ECC_Vehicle);
-		ObjectQueryParams.AddObjectTypesToQuery(ECC_PhysicsBody);
-
-		FHitResult Hit;
-		GetWorld()->LineTraceSingleByObjectType(Hit, CameraLocation, WorldEnd, ObjectQueryParams);
-
-		FVector ImpactLocation;
-		if (Hit.GetActor())
-		{
-			ImpactLocation = Hit.Location;
-		}
-		else
-		{
-			ImpactLocation = WorldEnd;
-		}
+		FVector ImpactLocation = CameraLocation + (CameraRotation.Vector() * 2500);
+// 
+// 		FCollisionObjectQueryParams ObjectQueryParams;
+// 		ObjectQueryParams.AddObjectTypesToQuery(ECC_WorldDynamic);
+// 		ObjectQueryParams.AddObjectTypesToQuery(ECC_WorldStatic);
+// 		ObjectQueryParams.AddObjectTypesToQuery(ECC_Vehicle);
+// 		ObjectQueryParams.AddObjectTypesToQuery(ECC_PhysicsBody);
+// 
+// 		FHitResult Hit;
+// 		GetWorld()->LineTraceSingleByObjectType(Hit, CameraLocation, WorldEnd, ObjectQueryParams);
+// 
+// 		FVector ImpactLocation;
+// 		if (Hit.GetActor())
+// 		{
+// 			ImpactLocation = Hit.Location;
+// 		}
+// 		else
+// 		{
+// 			ImpactLocation = WorldEnd;
+// 		}
 
 		FRotator SpawnRotator = UKismetMathLibrary::FindLookAtRotation(HandLocation, ImpactLocation);
 
