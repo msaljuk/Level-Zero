@@ -184,8 +184,8 @@ void ASMagicProjectile::TryEnemyPawnKillCompanionActor(APawn* Enemy, AActor* Oth
 			ASCompanionAIController* CompanionAIController = Cast<ASCompanionAIController>(OtherPawn->GetController());
 			if (CompanionAIController)
 			{
-				CompanionAIController->UnPossess();
 				OtherPawn->Destroy();
+				CompanionAIController->Destroy();
 			}
 		}
 /*	}*/
