@@ -16,6 +16,8 @@ class USAtttributeComponent;
 class USActionComponent;
 class UPawnNoiseEmitterComponent;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnNumberOfRevivesChanged, ASCharacter*, Character, int, NewNumberOfRevives, int, Delta);
+
 UCLASS()
 class ACTIONROGUELIKE_API ASCharacter : public ACharacter
 {
@@ -112,6 +114,15 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bIsFeelingSafe;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int NumberOfRevives;
+
+	UFUNCTION(BlueprintCallable)
+	int ChangeNumberOfRevives(int Delta);
+
 	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
 	void Distract(ASAIController* EnemyController);
+
+	UPROPERTY(BlueprintAssignable)
+	FOnNumberOfRevivesChanged OnNumberOfRevivesChanged;
 };

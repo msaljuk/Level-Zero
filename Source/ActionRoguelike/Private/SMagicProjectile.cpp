@@ -176,8 +176,8 @@ void ASMagicProjectile::Explode()
 
 void ASMagicProjectile::TryEnemyPawnKillCompanionActor(APawn* Enemy, AActor* OtherActor)
 {
-// 	if (Cast<ASAICharacter>(Enemy))
-// 	{
+	if (Cast<ASAICharacter>(Enemy))
+	{
 		APawn* OtherPawn = Cast<APawn>(OtherActor);
 		if (OtherPawn)
 		{
@@ -188,6 +188,6 @@ void ASMagicProjectile::TryEnemyPawnKillCompanionActor(APawn* Enemy, AActor* Oth
 				CompanionAIController->Destroy();
 			}
 		}
-/*	}*/
+	}
 }
 

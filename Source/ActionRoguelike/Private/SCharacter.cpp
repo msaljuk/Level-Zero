@@ -45,6 +45,8 @@ ASCharacter::ASCharacter()
 	bUseControllerRotationYaw = false;
 
 	bIsCrouched = false;
+
+	NumberOfRevives = 3;
 }
 
 
@@ -197,6 +199,13 @@ void ASCharacter::ReportNoise(USoundBase* SoundToPlay, float Volume)
 		//Report that we've played a sound with a certain volume in a specific location
 		MakeNoise(Volume, this, GetActorLocation());
 	}
+}
+
+int ASCharacter::ChangeNumberOfRevives(int Delta)
+{
+	NumberOfRevives += Delta;
+	OnNumberOfRevivesChanged.Broadcast(this, NumberOfRevives, Delta);
+	return NumberOfRevives;
 }
 
 void ASCharacter::OnHealthChanged(AActor* InstigatorActor, USAtttributeComponent* OwningComp, float NewHealth, float Delta)
