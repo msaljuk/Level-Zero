@@ -13,6 +13,7 @@
 #include "SActionComponent.h"
 #include "SCharacter.h"
 #include "AI/SAIController.h"
+#include "Companion AI/SCompanionAIController.h"
 
 // Sets default values
 ASAICharacter::ASAICharacter()
@@ -101,13 +102,16 @@ void ASAICharacter::OnPawnSeen(APawn* Pawn)
     {
 		if (!IsSeenPawnObstructed(Pawn) || DistanceTo < 750.0f)
 		{
-            if (!Pawn->IsPendingKill())
-            {
-				AIController->HeardPlayerLocation = Pawn->GetActorLocation();
-				AIController->LastHeardTime = GetWorld()->GetTimeSeconds();
+			ASCompanionAIController* CompanionAIController = Cast<ASCompanionAIController>(Pawn->GetController());
+			if (CompanionAIController && !CompanionAIController->bIsPossessed)
+			{
+                return;
+			}
 
-				SetTargetActor(Pawn);
-            }
+			AIController->HeardPlayerLocation = Pawn->GetActorLocation();
+			AIController->LastHeardTime = GetWorld()->GetTimeSeconds();
+
+			SetTargetActor(Pawn);
 			// GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Green, "Updating player location");
 
 			// GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Blue, "Character seen");

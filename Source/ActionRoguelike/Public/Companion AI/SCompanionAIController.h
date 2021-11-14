@@ -38,6 +38,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	Mode SetCompanionAIMode(Mode newMode);
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bIsPossessed;
+
 protected:
 
 	UPROPERTY(EditDefaultsOnly, Category = "AI")

@@ -19,6 +19,8 @@ void USBTService_CheckCompanionMode::TickNode(UBehaviorTreeComponent& OwnerComp,
 		{
 			Mode CompanionMode = CompanionAIController->GetCompanionAIMode();
 
+			GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Blue, CompanionMode == Follow ? "Follow" : "Hide");
+
 			BlackboardComp->SetValueAsEnum(CompanionModeKey.SelectedKeyName, CompanionMode);
 		}
 	}

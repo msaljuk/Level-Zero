@@ -15,6 +15,7 @@
 #include "AI/SAIController.h"
 #include "SCharacter.h"
 #include "AI/SAICharacter.h"
+#include "Companion AI/SCompanionAIController.h"
 
 // Sets default values
 ASMagicProjectile::ASMagicProjectile()
@@ -73,6 +74,8 @@ void ASMagicProjectile::OnActorOverlap(UPrimitiveComponent* OverlappedComponent,
 		{
 			return;
 		}
+
+		TryEnemyPawnKillCompanionActor(GetInstigator(), OtherActor);
 
 		Explode();
 
@@ -134,6 +137,8 @@ void ASMagicProjectile::OnActorHit(UPrimitiveComponent* HitComponent, AActor* Ot
 			return;
 		}
 
+		TryEnemyPawnKillCompanionActor(GetInstigator(), OtherActor);
+
 		Explode();
 	}
 }
@@ -168,3 +173,21 @@ void ASMagicProjectile::Explode()
 
 	Destroy();
 }
+
+void ASMagicProjectile::TryEnemyPawnKillCompanionActor(APawn* Enemy, AActor* OtherActor)
+{
+// 	if (Cast<ASAICharacter>(Enemy))
+// 	{
+		APawn* OtherPawn = Cast<APawn>(OtherActor);
+		if (OtherPawn)
+		{
+			ASCompanionAIController* CompanionAIController = Cast<ASCompanionAIController>(OtherPawn->GetController());
+			if (CompanionAIController)
+			{
+				CompanionAIController->UnPossess();
+				OtherPawn->Destroy();
+			}
+		}
+/*	}*/
+}
+

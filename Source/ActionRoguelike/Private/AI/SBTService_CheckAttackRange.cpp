@@ -43,7 +43,14 @@ void USBTService_CheckAttackRange::TickNode(UBehaviorTreeComponent& OwnerComp, u
 						{
 							if (TargetCharacter->bIsCompanion)
 							{
-								BlackboardComp->SetValueAsBool(CompanionSeenKey.SelectedKeyName, true);
+								ASCompanionAIController* CompanionAIController = Cast<ASCompanionAIController>(TargetCharacter->GetController());
+								if (CompanionAIController)
+								{
+									if (CompanionAIController->bIsPossessed)
+									{
+										BlackboardComp->SetValueAsBool(CompanionSeenKey.SelectedKeyName, true);
+									}
+								}
 							}
 							else
 							{
