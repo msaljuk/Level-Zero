@@ -30,12 +30,6 @@ public:
 protected:
 
 	UPROPERTY(VisibleAnywhere)
-	USpringArmComponent* SpringArmComp;
-
-	UPROPERTY(VisibleAnywhere)
-	UCameraComponent* CameraComp;
-
-	UPROPERTY(VisibleAnywhere)
 	USInteractionComponent* InteractionComp;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
@@ -83,6 +77,12 @@ protected:
 	void OnRep_PlayerState() override;
 
 public:	
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	USpringArmComponent* SpringArmComp;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	UCameraComponent* CameraComp;
 
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
