@@ -5,6 +5,7 @@
 #include "EnvironmentQuery/EnvQueryManager.h"
 #include "EnvironmentQuery/EnvQueryTypes.h"
 #include "AI/SAICharacter.h"
+#include "AI/SAIController.h"
 #include "SAtttributeComponent.h"
 #include "EngineUtils.h"
 #include "SCharacter.h"
@@ -21,6 +22,10 @@
 #include "../ActionRoguelike.h"
 #include "SCoin.h"
 #include "SBuyStation.h"
+#include "Companion AI/SCompanionAIController.h"
+#include "GameFramework/CharacterMovementComponent.h"
+#include "BrainComponent.h"
+#include "BehaviorTree/BlackboardComponent.h"
 
 static TAutoConsoleVariable<bool> CVarSpawnBots(TEXT("su.SpawnBots"), false, TEXT("Enable spawning of bots via timer."), ECVF_Cheat);
 
@@ -37,6 +42,8 @@ ASGameModeBase::ASGameModeBase()
 	NumberOfAlivePlayers = 0;
 
 	GameAlertLevel = None;
+
+	bIsCompanionAlive = true;
 }
 
 void ASGameModeBase::InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage)
@@ -287,6 +294,54 @@ void ASGameModeBase::GivePlayerKillCredits(ASCharacter* Player)
 	UE_LOG(LogTemp, Log, TEXT("PlayerCredits: %d"), PlayerState->PlayerCredits);
 }
 
+void ASGameModeBase::PauseCompanion()
+{
+	ASCompanionAIController* CompanionAIC = Cast<ASCompanionAIController>(UGameplayStatics::GetActorOfClass(GetWorld(), ASCompanionAIController::StaticClass()));
+	if (CompanionAIC)
+	{
+		ASCharacter* Spidey = Cast<ASCharacter>(CompanionAIC->GetPawn());
+		if (Spidey)
+		{
+			Spidey->GetCharacterMovement()->DisableMovement();
+		}
+
+		CompanionAIC->BrainComponent->StopLogic("Freezing Time");
+	}
+}
+
+void ASGameModeBase::ResumeCompanion()
+{
+	ASCompanionAIController* CompanionAIC = Cast<ASCompanionAIController>(UGameplayStatics::GetActorOfClass(GetWorld(), ASCompanionAIController::StaticClass()));
+	if (CompanionAIC)
+	{
+		ASCharacter* Spidey = Cast<ASCharacter>(CompanionAIC->GetPawn());
+		if (Spidey)
+		{
+			Spidey->GetCharacterMovement()->SetMovementMode(MOVE_Walking);
+		}
+
+		CompanionAIC->BrainComponent->StartLogic();
+	}
+}
+
+void ASGameModeBase::ChangeFreezeAllEnemies(bool bShouldFreeze)
+{
+	ASAIController* EnemyAIC = Cast<ASAIController>(UGameplayStatics::GetActorOfClass(GetWorld(), ASAIController::StaticClass()));
+	if (EnemyAIC)
+	{
+		EnemyAIC->GetBlackboardComponent()->SetValueAsBool("TimeFrozen", bShouldFreeze);
+	}
+}
+
+void ASGameModeBase::AdjustPlayerSpeed(float Delta)
+{
+	ASCharacter* PlayerCharacter = Cast<ASCharacter>(UGameplayStatics::GetActorOfClass(GetWorld(), ASCharacter::StaticClass()));
+	if (PlayerCharacter)
+	{
+		PlayerCharacter->GetMovementComponent()->Velocity = PlayerCharacter->GetMovementComponent()->Velocity * Delta;
+	}
+}
+
 void ASGameModeBase::RespawnPlayer_Implementation(AController* Controller)
 {
 	if (ensure(Controller))
@@ -408,4 +463,37 @@ AlertLevel ASGameModeBase::SetGameAlertLevel(AlertLevel NewAlertLevel)
 	}
 
 	return GameAlertLevel;
+}
+
+void ASGameModeBase::MarkCompanionAsKilled()
+{
+	bIsCompanionAlive = false;
+	OnCompanionLifeChanged.Broadcast(false);
+}
+
+void ASGameModeBase::MarkCompanionAsRevived()
+{
+	bIsCompanionAlive = true;
+	OnCompanionLifeChanged.Broadcast(true);
+}
+
+void ASGameModeBase::FreezeTime()
+{
+	bIsTimeFrozen = true;
+	UGameplayStatics::SetGlobalTimeDilation(GetWorld(), 0.4);
+	AdjustPlayerSpeed(0.5);
+	OnTimeFrozenChanged.Broadcast(true);
+	PauseCompanion();
+	ChangeFreezeAllEnemies(true);
+
+	FTimerHandle FreezeTimerHandle;
+	GetWorld()->GetTimerManager().SetTimer(FreezeTimerHandle, [&]()
+		{
+			bIsTimeFrozen = false;
+			UGameplayStatics::SetGlobalTimeDilation(GetWorld(), 1.0);
+			AdjustPlayerSpeed(2.0);
+			OnTimeFrozenChanged.Broadcast(false);
+			ResumeCompanion();
+			ChangeFreezeAllEnemies(false);
+		}, 5, false);
 }

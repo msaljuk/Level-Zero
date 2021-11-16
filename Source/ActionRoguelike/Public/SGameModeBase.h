@@ -25,6 +25,8 @@ enum AlertLevel
 };
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnAlertLevelChanged, ASGameModeBase*, GameModeBase, AlertLevel, GameAlertLevel);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnCompanionLifeChanged, bool, bIsCompanionCurrentlyAlive);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTimeFrozenChanged, bool, bIsTimeFrozen);
 
 USTRUCT(BlueprintType)
 struct FMonsterInfoRow : public FTableRowBase
@@ -113,6 +115,14 @@ protected:
 
 	void GivePlayerKillCredits(ASCharacter* Player);
 
+	void PauseCompanion();
+
+	void ResumeCompanion();
+
+	void ChangeFreezeAllEnemies(bool bShouldFreeze);
+
+	void AdjustPlayerSpeed(float Delta);
+
 public:
 
 	virtual void OnActorKilled(AActor* VictimActor, AActor* Killer);
@@ -150,4 +160,25 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level")
 	UObject* CoverPointAPI;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Companion")
+	bool bIsCompanionAlive;
+
+	UPROPERTY(BlueprintAssignable, Category = "Companion")
+	FOnCompanionLifeChanged OnCompanionLifeChanged;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Companion")
+	bool bIsTimeFrozen;
+
+	UPROPERTY(BlueprintAssignable, Category = "Companion")
+	FOnTimeFrozenChanged OnTimeFrozenChanged;
+
+	UFUNCTION(BlueprintCallable)
+	void MarkCompanionAsKilled();
+
+	UFUNCTION(BlueprintCallable)
+	void MarkCompanionAsRevived();
+
+	UFUNCTION(BlueprintCallable)
+	void FreezeTime();
 };

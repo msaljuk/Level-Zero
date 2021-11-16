@@ -16,6 +16,7 @@
 #include "SCharacter.h"
 #include "AI/SAICharacter.h"
 #include "Companion AI/SCompanionAIController.h"
+#include "SGameModeBase.h"
 
 // Sets default values
 ASMagicProjectile::ASMagicProjectile()
@@ -186,6 +187,12 @@ void ASMagicProjectile::TryEnemyPawnKillCompanionActor(APawn* Enemy, AActor* Oth
 			{
 				OtherPawn->Destroy();
 				CompanionAIController->Destroy();
+
+				ASGameModeBase* GameModeBase = Cast<ASGameModeBase>(UGameplayStatics::GetGameMode(GetWorld()));
+				if (GameModeBase)
+				{
+					GameModeBase->MarkCompanionAsKilled();
+				}
 			}
 		}
 	}
